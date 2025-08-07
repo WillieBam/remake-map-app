@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
                 'name' => 'User ' . ($i + 1),
                 'email' => 'user' . ($i + 1) . '@gmail.com',
                 'password' => bcrypt('password'),
-                'role' => 'user',
+                'role_id' => rand(1,3),
                 'country_id' => rand(1, 195) // Assuming you have 10
             ]);
         }
