@@ -13,7 +13,7 @@ class CreateReportTable extends Migration
      */
     public function up()
     {
-        Schema::create('report', function (Blueprint $table) {
+        Schema::create('reports', function (Blueprint $table) {
             $table->id('report_id')->autoIncrement();
             $table->foreignId('user_id')->nullable()->constrained('users', 'user_id')->onDelete('set null');
             $table->foreignId('message_id')->nullable()->constrained('messages', 'message_id')->onDelete('set null');
@@ -28,6 +28,6 @@ class CreateReportTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('report');
+        Schema::dropIfExists('reports');
     }
 }
