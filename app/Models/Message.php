@@ -10,7 +10,7 @@ class Message extends Model
     use HasFactory;
     public $timestamps = true;
 
-    protected $fillable = ['content'];
+    protected $fillable = ['content', 'user_id', 'country_id', 'views'];
 
    
     protected $primaryKey = 'message_id';

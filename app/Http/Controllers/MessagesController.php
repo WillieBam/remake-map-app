@@ -9,8 +9,17 @@ use Illuminate\Support\Facades\DB;
 class MessagesController extends Controller
 {
     function createMessage(Request $request){
+        // validate message
+        $validateMessage = $request->validate([
+            'content'=> 'required|min:10|max:500',
+        ]);
+        // after validate, dump into Message table
+        Message::create($validateMessage);
 
-        // create message
+        // refresh the page and update the latest message
+        
+        return redirect()->route('');
+
     }
 
     function deleteMessage($message_id){
