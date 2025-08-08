@@ -28,15 +28,20 @@ class Message extends Model
 
     // one message belongs to one country
     public function getCountry(){
-        // Country class coming soooon
-        //return $this ->belongsTo(Country::class, foreignKey:'country_id', ownerKey:'country_id');
+     
+        return $this ->belongsTo(Country::class, foreignKey:'country_id', ownerKey:'country_id');
 
     }
 
-    // A message belongs to one country
-    // Uncomment this when you create the Country model
-    // public function country()
-    // {
-    //     return $this->belongsTo(Country::class, 'country_id', 'country_id');
-    // }
+    // one message has many reports
+        public function getReport(){
+     
+        return $this ->hasMany(Report::class, foreignKey:'report_id');
+
+    }
+
+
+
+
+  
 }
