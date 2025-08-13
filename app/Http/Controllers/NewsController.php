@@ -12,53 +12,35 @@ class newsController extends Controller
         // addNews
     }
 
+    function viewCreateNews(){
+        
+    }
+
     function deleteNews($id){
         //deleteNews
     }
 
     function editNews(Request $request, $id){
-        // editNews
+        // editNews post
     }
 
-    //for continent admin 
-    function getCountryNews($country_id){
-        // getCountryNews
+    function viewEditNews(){
+        //get
     }
 
-    //for global admin
-    function getAllNews(){
-        // getAllNews
+    function viewNews(){
+        //specific news get
     }
 
-    // for user which one all or based on country?
-
-
-    /*Search functions*/
-    //search by id ?? 
-    function getNewsById($news_id){
-        // getNewsById with view increment
+    function viewAllNews(){
+        // get all news
     }
 
-    //search for specific admin created news
-    function getAdminNews($user_id){
-        // getAdminNews
-    }
-
-    //search for titile
-    function searchNews(Request $request){
+    //search for title
+    function searchNews(Request $request, $order){
         // searchNews by title or content
     }
 
     
-    /*filter*/
-    //Most viewed
-    function getMostViewedNews(){
-        // getMostViewedNews
-    }
-
-    //Latest news
-    function getLatestNews(){
-        // getLatestNews
-    }
 
 }
