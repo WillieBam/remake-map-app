@@ -14,7 +14,7 @@ class CreateCountriesTable extends Migration
     public function up()
     {
         Schema::create('countries', function (Blueprint $table) {
-            $table->id('countery_id')->autoIncrement();
+            $table->id('country_id')->autoIncrement();
             $table->foreignId('continent_id')->nullable()->constrained('continents', 'continent_id')->onDelete('set null');
             $table->string('name');
         });
