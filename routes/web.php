@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+// Report routes
+Route::get('/dashboard/reports/{message_id}', [ReportController::class, 'viewReportsWithId']);
+Route::get('/dashboard/reports', [ReportController::class, 'viewReports']);
