@@ -7,10 +7,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Messagge;
+use App\Models\Country;
+use App\Models\Role;
+use App\Models\Report;
 
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
+
+    public $timestamps = true;
 
     /**
      * The attributes that are mass assignable.
@@ -20,7 +26,6 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'password',
     ];
 
     /**
@@ -30,7 +35,7 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-        'remember_token',
+        // 'remember_token',
     ];
 
     /**
@@ -38,7 +43,27 @@ class User extends Authenticatable
      *
      * @var array<string, string>
      */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    // protected $casts = [
+    //     'email_verified_at' => 'datetime',
+    // ];
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class, 'user_id', 'user_id');
+    }
+
+    public function country()
+    {
+        return $this->belongsTo(Country::class, 'country_id', 'country_id');
+    }
+
+    public function role()
+    {
+        return $this->hasOne(Role::class, 'role_id', 'role_id');
+    }
+
+    public function reports()
+    {
+        return $this->hasMany(Report::class, 'user_id', 'user_id');
+    }
 }
