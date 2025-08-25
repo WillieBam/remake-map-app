@@ -19,5 +19,6 @@ Route::get('/', function () {
 });
 
 // Report routes
-Route::get('/dashboard/reports/{message_id}', [ReportController::class, 'viewReportsWithId']);
-Route::get('/dashboard/reports', [ReportController::class, 'viewReports']);
+Route::get('/dashboard/reports/{message_id}', [ReportController::class, 'viewReportsWithId'])->name('viewReportsWithId');
+Route::get('/dashboard/reports', [ReportController::class, 'viewReports'])->name('viewReports');
+Route::post('/dashboard/reports/search', [ReportController::class, 'searchReports'])->name('searchReports');
