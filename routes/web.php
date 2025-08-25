@@ -12,8 +12,6 @@ use App\Http\Controllers\UserController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::view('/viewSignUp','viewSignUp');
-Route::post('/viewSignUp',[UserController::class,'createUser']);
 Route::get('/deleteUser/{userId}',[UserController::class,'deleteUser']);
 Route::get('/deleteAdmin/{userId}',[UserController::class,'deleteAdmin']);
 Route::get('/profile/{userId}',[UserController::class,'viewUser']);
@@ -22,8 +20,6 @@ Route::get('/viewAllUser',[UserController::class,'adminViewUser']);
 Route::get('/viewAllAdmin',[UserController::class,'globalAdminViewAdmin']);
 Route::get('/banUser/{userId}',[UserController::class,'banUser']);
 Route::get('/banAdmin/{userId}',[UserController::class,'banAdmin']);
-Route::get('/changePassword/{userId}',[UserController::class,'viewChangePassword']);
-Route::post('/changePassword/{userId}',[UserController::class,'changePassword']);
 Route::get('/', function () {
     return view('welcome');
 });
