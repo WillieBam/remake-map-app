@@ -6,17 +6,20 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Messagge;
 use App\Models\Country;
 use App\Models\Role;
 use App\Models\Report;
 
+
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
     public $timestamps = true;
+    protected $primaryKey = 'user_id';
 
     /**
      * The attributes that are mass assignable.
@@ -66,4 +69,5 @@ class User extends Authenticatable
     {
         return $this->hasMany(Report::class, 'user_id', 'user_id');
     }
+
 }
