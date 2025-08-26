@@ -9,6 +9,7 @@ class News extends Model
 {
     use HasFactory;
     public $timestamps = true;
+        protected $primaryKey = 'news_id';
     //country_id and user_id not sure..
     protected $fillable = ['title','content','user_id','country_id'];
 
@@ -19,6 +20,6 @@ class News extends Model
 
     public function getCountry()
     {
-        return $this->hasOne(Country::class);
+        return $this->belongsTo(Country::class);
     }
 }

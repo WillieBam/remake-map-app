@@ -1,9 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\MessagesController;
-
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,6 +17,7 @@ use App\Http\Controllers\MessagesController;
 |
 */
 
+
 //Route::view('/','welcome');
 Route::get('/countries', [CountryController::class, 'index'])->name('countries.index');
 Route::get('/countries/search', [CountryController::class, 'searchCountry'])->name('countries.search');
@@ -23,11 +25,21 @@ Route::get('/countries/{id}', [CountryController::class, 'index'])->name('countr
 
 //Route::get('/countries/{id}/message/create', [MessagesController::class, 'create'])->name('message.create');
 Route::post('/countries/{id}/create-message', [MessagesController::class, 'store'])->name('message.add');
+Route::get('/deleteUser/{userId}',[UserController::class,'deleteUser']);
+Route::get('/deleteAdmin/{userId}',[UserController::class,'deleteAdmin']);
+Route::get('/profile/{userId}',[UserController::class,'viewUser']);
+Route::post('/profile/{userId}',[UserController::class,'updateUser']);
+Route::get('/viewAllUser',[UserController::class,'adminViewUser']);
+Route::get('/viewAllAdmin',[UserController::class,'globalAdminViewAdmin']);
+Route::get('/banUser/{userId}',[UserController::class,'banUser']);
+Route::get('/banAdmin/{userId}',[UserController::class,'banAdmin']);
+Route::get('/', function () {
+    return view('welcome');
+});
 
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth'])->name('dashboard');
 
-
-
-
-
-
+require __DIR__.'/auth.php';
 
