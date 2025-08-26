@@ -32,7 +32,7 @@
 
                 <div class="form-group row">    
                     <div class="col-sm-8">
-                        <select class="form-control" id="selectUser" name="user_selected" required focus>
+                        <select class="form-control" id="country" name="country" required focus>
                             <option value="" disabled selected>Please select country</option>
                             @foreach ($countries as $country)
                             <option value="{{ $country->id }}">{{ $country->name }}</option>
