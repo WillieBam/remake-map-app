@@ -19,11 +19,10 @@ class NewsSeeder extends Seeder
         for ($i=0; $i<100;$i++){
             DB::table('News')->insert([
                 'title' => Str::random(50),
-                'content' => Str::random(200),
-                'views' => rand(0, 1000),
                 'user_id' => rand(1,100),
-                'country_id' => rand(1,195)
-
+                'country_id' => rand(1,195),
+                'content' => Str::random(200),
+                'views' => rand(0, 1000)
             ]);
         }
     }

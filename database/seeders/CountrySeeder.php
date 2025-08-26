@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class CountrySeeder extends Seeder
 {
@@ -215,7 +217,7 @@ class CountrySeeder extends Seeder
         ];
 
         foreach ($countries as $country) {
-            \DB::table('countries')->insert($country);
+            DB::table('countries')->insert($country);
         }
        
     }

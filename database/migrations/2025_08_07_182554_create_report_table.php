@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateNewsTable extends Migration
+class CreateReportTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,11 @@ class CreateNewsTable extends Migration
      */
     public function up()
     {
-        Schema::create('news', function (Blueprint $table) {
-            $table->id('news_id')->autoIncrement();
+        Schema::create('reports', function (Blueprint $table) {
+            $table->id('report_id')->autoIncrement();
             $table->foreignId('user_id')->nullable()->constrained('users', 'user_id')->onDelete('set null');
-            $table->foreignId('country_id')->nullable()->constrained('countries', 'country_id')->onDelete('set null');
-            $table->string('title');
-            $table->string('content');
-            $table->integer('views')->default(0);
+            $table->foreignId('message_id')->nullable()->constrained('messages', 'message_id')->onDelete('set null');
             $table->timestamps();
-            
-
         });
     }
 
@@ -33,6 +28,6 @@ class CreateNewsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('news');
+        Schema::dropIfExists('reports');
     }
 }

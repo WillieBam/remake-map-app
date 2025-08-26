@@ -26,6 +26,22 @@
                 <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required />
             </div>
 
+            <!-- Country -->
+            <div class="mt-4">
+                <x-label for="country" :value="__('Country')" />
+
+                <div class="form-group row">    
+                    <div class="col-sm-8">
+                        <select class="form-control" id="country" name="country" required focus>
+                            <option value="" disabled selected>Please select country</option>
+                            @foreach ($countries as $country)
+                            <option value="{{ $country->country_id }}">{{ $country->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+            </div>            
+
             <!-- Password -->
             <div class="mt-4">
                 <x-label for="password" :value="__('Password')" />

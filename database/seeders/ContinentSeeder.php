@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class ContinentSeeder extends Seeder
 {
@@ -28,7 +30,7 @@ class ContinentSeeder extends Seeder
         
 
         foreach ($continents as $continent) {
-            \DB::table('continents')->insert($continent);
+            DB::table('continents')->insert($continent);
         }
     }
 }
