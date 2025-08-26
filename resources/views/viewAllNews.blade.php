@@ -37,6 +37,14 @@
                 background: #e6e6e6;
                 box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
             }
+            .news-meta {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 8px;
+                font-size: 0.8em;
+                color: #666;
+                font-weight: normal;
+            }
             .news-details {
                 flex: 1;
                 width: 50%;
@@ -170,7 +178,11 @@
             <div class="news-list">
                 @foreach($news as $newsItem)
                     <a href="{{ url('/dashboard/'.$user_id.'/manage_news/'.$newsItem['news_id']) }}" class="news-item-container">
-                        {{ $newsItem['title'] }}
+                        <div class="news-title">{{ $newsItem['title'] }}</div>
+                        <div class="news-meta">
+                            <span class="news-views">{{ $newsItem['views'] }} views</span>
+                            <span class="news-date">{{ date('M j, Y', strtotime($newsItem['created_at'])) }}</span>
+                        </div>
                     </a>
                 @endforeach
             </div>
