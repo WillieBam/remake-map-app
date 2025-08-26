@@ -20,6 +20,8 @@ Route::get('/viewAllUser',[UserController::class,'adminViewUser']);
 Route::get('/viewAllAdmin',[UserController::class,'globalAdminViewAdmin']);
 Route::get('/banUser/{userId}',[UserController::class,'banUser']);
 Route::get('/banAdmin/{userId}',[UserController::class,'banAdmin']);
+Route::get('/changePassword/{userId}',[UserController::class,'viewChangePassword']);
+Route::post('/changePassword/{userId}',[UserController::class,'changePassword']);
 Route::get('/', function () {
     return view('welcome');
 });
