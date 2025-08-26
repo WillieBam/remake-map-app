@@ -20,7 +20,6 @@ class User extends Authenticatable
 
     public $timestamps = true;
     protected $primaryKey = 'user_id';
-
     /**
      * The attributes that are mass assignable.
      *
@@ -29,6 +28,8 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'country_id',
+        'password'
     ];
 
     /**
