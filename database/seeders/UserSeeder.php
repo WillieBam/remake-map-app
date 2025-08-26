@@ -62,6 +62,7 @@ class UserSeeder extends Seeder
                 'is_banned' => false,
                 'created_at' => now(),
                 'updated_at' => NULL,
+
             ]);
         }
     }
