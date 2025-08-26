@@ -21,7 +21,7 @@ class RegisteredUserController extends Controller
      */
     public function create()
     {
-        $countries = Country::all()->get();
+        $countries = Country::all();
 
         return view('auth.register', ['countries' => $countries]);
     }

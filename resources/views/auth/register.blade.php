@@ -35,7 +35,7 @@
                         <select class="form-control" id="country" name="country" required focus>
                             <option value="" disabled selected>Please select country</option>
                             @foreach ($countries as $country)
-                            <option value="{{ $country->id }}">{{ $country->name }}</option>
+                            <option value="{{ $country->country_id }}">{{ $country->name }}</option>
                             @endforeach
                         </select>
                     </div>
