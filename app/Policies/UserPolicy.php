@@ -15,9 +15,9 @@ class UserPolicy
      * @param  \App\Models\User  $user
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function viewAny(User $user)
+    public function viewAllAdmin(User $user)
     {
-        
+        return $user->role->name === "Global Admin";
     }
 
     /**
@@ -27,9 +27,9 @@ class UserPolicy
      * @param  \App\Models\User  $model
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, User $model)
+    public function viewAllUser(User $user)
     {
-        //
+        return ($user->role->name === "Continent Admin"||$user->role->name === "Global Admin");
     }
 
     /**
@@ -38,9 +38,9 @@ class UserPolicy
      * @param  \App\Models\User  $user
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function create(User $user)
+    public function deleteUser(User $user)
     {
-        //
+        return ($user->role->name === "Continent Admin"||$user->role->name === "Global Admin");
     }
 
     /**
@@ -50,9 +50,9 @@ class UserPolicy
      * @param  \App\Models\User  $model
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(User $user, User $model)
+    public function deleteAdmin(User $user)
     {
-        //
+        return $user->role->name === "Global Admin";
     }
 
     /**
@@ -62,9 +62,9 @@ class UserPolicy
      * @param  \App\Models\User  $model
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(User $user, User $model)
+    public function banUser(User $user)
     {
-        //
+        return ($user->role->name === "Continent Admin"||$user->role->name === "Global Admin");
     }
 
     /**
@@ -74,9 +74,9 @@ class UserPolicy
      * @param  \App\Models\User  $model
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user, User $model)
+    public function banAdmin(User $user)
     {
-        //
+         return $user->role->name === "Global Admin";
     }
 
     /**

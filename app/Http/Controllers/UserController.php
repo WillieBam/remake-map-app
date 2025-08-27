@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Password;
 use App\Models\User;
+use App\Models\Country;
+use App\Models\Message;
 use Illuminate\Validation\Rule;
 class UserController extends Controller
 {
@@ -25,14 +27,16 @@ class UserController extends Controller
         return redirect('viewSignUp')->with('success', 'Sign up successful!');
     }
 
-    public function deleteUser($id)
+    public function deleteUser($id,$adminId)
     {
+        $this->authorize('deleteUser', User::class);
         $data = User::find($id);
         $data->delete();
-        return redirect('/viewAllUser');
+        return redirect('/viewAllUser/'.$adminId);
     }
     public function deleteAdmin($id)
     {
+        $this->authorize('deleteAdmin', User::class);
         $data = User::find($id);
         $data->delete();
         return redirect('/viewAllAdmin');
@@ -40,43 +44,59 @@ class UserController extends Controller
 
     public function updateUser(Request $request,$id)
     {
-         $request->validate([
+        $request->validate([
             'name' => 'required|string|max:100',
-            'email' => ['required','email',Rule::unique('users')->ignore($id,'user_id')]
+            'email' => ['required','email',Rule::unique('users','email')->ignore($id,'user_id')]
         ]);
         $data = User::find($id);
         $data -> name = $request -> name;
         $data -> email = $request -> email;
+        $data -> country_id = $request -> country_id;
         $data -> save();
-        return view('profile',["data"=>$data,'success'=>'Update profile successful!']);
+        $countries = Country::all();
+        $messages = Message::where('user_id',$id)->paginate(15);
+        return view('profile',["data"=>$data,'success'=>'Update profile successful!','countries'=>$countries,"messages"=>$messages]);
     }
     public function viewUser($id)
     {
         $data = User::find($id);
-        return view('profile',["data"=>$data]);
+        $countries = Country::all();
+        $messages = Message::where('user_id',$id)->paginate(15);
+        return view('profile',["data"=>$data,"countries"=>$countries,"messages"=>$messages]);
     }
-    public function adminViewUser(){
-        $data = User::where('role_id',3)->orderBy('name','asc')->paginate(15);
-        return view('viewAllUser',["data"=>$data]);
+    public function adminViewUser($id){
+        $this->authorize('viewAllUser', User::class);
+        $admin = User::find($id);
+        if($admin->role_id==1)
+            $data = User::where('role_id',3)->orderBy('name','asc')->paginate(15);
+        else if($admin->role_id==2){
+            $adminContinent = Country::find($admin->country_id) -> continent_id;
+            $countryList = Country::where('continent_id',$adminContinent)->pluck('country_id');
+            $data = User::whereIn('country_id',$countryList)->where('role_id',3)->orderBy('name','asc')->paginate(15);
+        }
+        return view('viewAllUser',["data"=>$data,"adminId"=>$id]);
     }
     public function globalAdminViewAdmin(){
+        $this->authorize('viewAllAdmin', User::class);
         $data = User::where('role_id',2)->orderBy('name','asc')->paginate(15);
         return view('viewAllAdmin',["data"=>$data]);
     }
 
-    public function banUser($id)
+    public function banUser($id,$adminId)
     {
+        $this->authorize('banUser', User::class);
         $data = User::find($id);
         $data -> is_banned = true;
         $data -> save();
-        return view('viewAllUser',["data"=>User::where('role_id',3)->orderBy('name','asc')->paginate(15)]);
+        return redirect('/viewAllUser/'.$adminId);
     }
      public function banAdmin($id)
     {
+        $this->authorize('banAdmin', User::class);
         $data = User::find($id);
         $data -> is_banned = true;
         $data -> save();
-        return view('viewAllAdmin',["data"=>User::where('role_id',2)->orderBy('name','asc')->paginate(15)]);
+        return redirect('/viewAllAdmin');
     }
     public function changePassword(Request $request,$id)
     { 
