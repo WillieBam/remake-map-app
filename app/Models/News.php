@@ -16,13 +16,13 @@ class News extends Model
     public $timestamps = true;
     protected $fillable = ['title','content','user_id','country_id'];
 
-    public function getUser()
+    public function user()
     {
         return $this->hasOne(User::class);
     }
 
-    public function getCountry()
+    public function country()
     {
-        return $this->hasOne(Country::class);
+        return $this->hasOne(Country::class,'country_id','country_id');
     }
 }

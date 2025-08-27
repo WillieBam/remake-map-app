@@ -8,58 +8,65 @@ use App\Models\Country;
 use App\Models\Continent; 
 use App\Models\News;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class newsController extends Controller
 {
     // addNews
     function createNews(Request $request){
+        $request->validate([
+            'title' => 'required',
+            'content' => 'required',
+        ]);
+        $user = Auth::user();
         $news = new News();
         $news->title = $request->input('title');
         $news->content = $request->input('content');
-        $news->user_id = $request->input('user_id');
+        $news->user_id = $user->user_id;
         $news->country_id = $request->input('country_id');
         $news->save();
 
-        return redirect('/dashboard/' . $news->user_id . '/manage_news');
+        return redirect('/dashboard/manage_news');
     }
 
     //get create news form
-    function viewCreateNews($user_id){
-
-        // Fetch the user and their country
-        $user = User::find($user_id);
+    function viewCreateNews(){
+        $user = Auth::user();
         $country = $user->country;
         $continent_id = $country->continent_id;
         $countries = Country::where('continent_id', $continent_id)->get();
-
-        return view('createNews', ['user_id' => $user_id, 'countries' => $countries]);
+        return view('createNews', ['user_id' => $user->id, 'countries' => $countries]);
     }
 
+    //delete news
     function deleteNews(Request $request){
         $news = News::find($request->news_id);
         if ($news) {
+            $this->authorize('delete', $news);
             $news->delete();
-            return redirect('/dashboard/' . $request->user_id . '/manage_news');
         }
-        return redirect('/dashboard/' . $request->user_id . '/manage_news');
+        return redirect('/dashboard/manage_news');
     }
 
     //edit news
     function editNews(Request $request, $news_id){
-
+        $request->validate([
+            'title' => 'required',
+            'content' => 'required',
+        ]);
         $news = News::find($request->news_id);
+        $this->authorize('update', $news);
         $news->title = $request->input('title');
         $news->content = $request->input('content');
         $news->save();
-
-        return redirect('/dashboard/' . $request->user_id . '/manage_news');
+        return redirect('/dashboard/manage_news');
     }
 
     //get edit news form
-    function viewEditNews($user_id, $news_id){
-
+    function viewEditNews($news_id){
+        $user = Auth::user();
         $news = News::find($news_id);
-        return view('editNews', ['user_id' => $user_id, 'news_id' => $news_id, 'news' => $news]);
+        return view('editNews', ['user_id' => $user->id, 'news_id' => $news_id, 'news' => $news]);
     }
 
     //view specific news
@@ -73,86 +80,68 @@ class newsController extends Controller
 
 
     //view all news list, with optional selected news
-    function viewAllNews($user_id, $news_id = null){
-        $user = User::find($user_id);
-        $country = $user->country;
-        $continent_id = $country->continent_id;
-
-        $countries = Country::where('continent_id', $continent_id)->get();
+    function viewAllNews(Request $request, $news_id = null){
+        $this->authorize('viewAny', News::class);
+        $user = Auth::user();
+        $allNews = News::all();
         $news = [];
-
-        // Gather all news from countries in the continent
-        foreach ($countries as $country) {
-            $news = array_merge($news, $country->News->toArray());
+        foreach ($allNews as $newsItem) {
+            if ($user->can('view', $newsItem)) {
+                $news[] = $newsItem;
+            }
         }
-
-        // Re-index array for Blade compatibility
-        $news = array_values($news);
-
         $selectedNews = null;
         if ($news_id) {
             $selectedNews = News::find($news_id);
         }
-
         return view('viewAllNews', [
             'news' => $news,
-            'user_id' => $user_id,
+            'user_id' => $user->id,
             'selectedNews' => $selectedNews
         ]);
     }
 
     //search for title
     //search for title or content (POST)
-    public function searchNews(Request $request, $user_id) {
+    public function searchNews(Request $request) {
         $search = $request->input('search');
         $order = $request->input('order', 'desc');
-        $user = User::find($user_id);
-        $country = $user->country;
-        $continent_id = $country->continent_id;
-        $countries = Country::where('continent_id', $continent_id)->get();
-        $news = [];
-        foreach ($countries as $country) {
-            $news = array_merge($news, $country->News->toArray());
-        }
+        $user = Auth::user();
+        $allNews = News::query();
         if ($search) {
-            $news = array_filter($news, function($item) use ($search) {
-                return stripos($item['title'], $search) !== false || stripos($item['content'], $search) !== false;
+            $allNews = $allNews->where(function($q) use ($search) {
+                $q->where('title', 'like', "%$search%")
+                  ->orWhere('content', 'like', "%$search%");
             });
         }
         // Order logic
         if ($order === 'asc') {
-            usort($news, function($a, $b) {
-                return strtotime($a['created_at']) <=> strtotime($b['created_at']);
-            });
+            $allNews = $allNews->orderBy('created_at', 'asc');
         } elseif ($order === 'desc') {
-            usort($news, function($a, $b) {
-                return strtotime($b['created_at']) <=> strtotime($a['created_at']);
-            });
+            $allNews = $allNews->orderBy('created_at', 'desc');
         } elseif ($order === 'title_asc') {
-            usort($news, function($a, $b) {
-                return strcmp($a['title'], $b['title']);
-            });
+            $allNews = $allNews->orderBy('title', 'asc');
         } elseif ($order === 'title_desc') {
-            usort($news, function($a, $b) {
-                return strcmp($b['title'], $a['title']);
-            });
+            $allNews = $allNews->orderBy('title', 'desc');
         } elseif ($order === 'views_desc') {
-            usort($news, function($a, $b) {
-                return ($b['views'] ?? 0) <=> ($a['views'] ?? 0);
-            });
+            $allNews = $allNews->orderBy('views', 'desc');
         } elseif ($order === 'views_asc') {
-            usort($news, function($a, $b) {
-                return ($a['views'] ?? 0) <=> ($b['views'] ?? 0);
-            });
+            $allNews = $allNews->orderBy('views', 'asc');
         }
-        $news = array_values($news);
+        $allNews = $allNews->get();
+        $news = [];
+        foreach ($allNews as $newsItem) {
+            if ($user->can('view', $newsItem)) {
+                $news[] = $newsItem;
+            }
+        }
         return view('viewAllNews', [
             'news' => $news,
-            'user_id' => $user_id,
+            'user_id' => $user->id,
             'selectedNews' => null
         ]);
-    }
 
+    }
     
 
 }

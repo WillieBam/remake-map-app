@@ -75,11 +75,10 @@
                 <p>Update the details of your news story</p>
             </div>
             
-            <form action="{{ url('/dashboard/'.$user_id.'/manage_news/edit_news/'.$news_id) }}" method="POST">
+            <form action="{{ url('/dashboard/manage_news/edit_news/'.$news_id) }}" method="POST">
                 @csrf
                 <div class="hidden-inputs">
                     <input type="hidden" id="news_id" name="news_id" value="{{ $news_id }}">
-                    <input type="hidden" id="user_id" name="user_id" value="{{ $user_id }}">
                 </div>
                 
                 <div class="mb-4">

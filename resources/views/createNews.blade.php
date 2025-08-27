@@ -55,9 +55,8 @@
                 <p class="text-muted">Fill out the form below to publish a new news story</p>
             </div>
             
-            <form action="{{ url('/dashboard/'.$user_id.'/manage_news/create_news') }}" method="POST">
+            <form action="{{ url('/dashboard/manage_news/create_news') }}" method="POST">
                 @csrf
-                <input type="hidden" id="user_id" name="user_id" value="{{ $user_id }}">
                 
                 <div class="mb-3">
                     <label for="title" class="form-label">News Title</label>

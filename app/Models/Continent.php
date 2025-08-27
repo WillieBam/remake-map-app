@@ -12,7 +12,7 @@ class Continent extends Model
     use HasFactory;
 
 
-    public function getCountries()
+    public function countries()
     {
         return $this->hasMany(Country::class);
     }

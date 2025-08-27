@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\newsController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -29,3 +30,29 @@ Route::get('/dashboard', function () {
 })->middleware(['auth'])->name('dashboard');
 
 require __DIR__.'/auth.php';
+
+//news routes
+
+Route::controller(newsController::class)->middleware(['auth'])->group(function () {
+
+    //view specific news, after users click the news list
+    Route::get('/country/{country_id}/news/{news_id}','viewNews');
+
+    //create news
+    Route::get('/dashboard/manage_news/create_news', 'viewCreateNews');
+    Route::post('/dashboard/manage_news/create_news', 'createNews');
+
+    //View news list (with optional selected news)
+    Route::get('/dashboard/manage_news','viewAllNews');
+    Route::get('/dashboard/manage_news/{news_id}', 'viewAllNews');
+    // Search news (POST)
+    Route::post('/dashboard/manage_news/search', 'searchNews');
+
+    //edit news
+    Route::get('/dashboard/manage_news/edit_news/{news_id}', 'viewEditNews');
+    Route::post('/dashboard/manage_news/edit_news/{news_id}', 'editNews');
+
+    //delete news
+    Route::delete('/dashboard/manage_news/delete_news/{news_id}', 'deleteNews');
+
+});

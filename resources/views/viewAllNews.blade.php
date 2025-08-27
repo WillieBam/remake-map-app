@@ -149,11 +149,34 @@
                 height: 100%;
                 padding: 20px;
             }
+            
+            /* NEW STYLES FOR NEWS ITEM METADATA */
+            .news-item-meta {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 8px;
+                font-size: 0.8em;
+                color: #666;
+                font-weight: normal;
+            }
+            .news-views {
+                display: flex;
+                align-items: center;
+            }
+            .news-date {
+                display: flex;
+                align-items: center;
+            }
+            .news-title {
+                font-size: 1.1em;
+                margin-bottom: 8px;
+                line-height: 1.4;
+            }
         </style>
     </head>
     <body>
         <h1>All News</h1>
-        <form class="search-bar" method="POST" action="{{ url('/dashboard/'.$user_id.'/manage_news/search') }}">
+    <form class="search-bar" method="POST" action="{{ url('/dashboard/manage_news/search') }}">
             @csrf
             <input type="text" name="search" placeholder="Search news..." value="{{ old('search', request('search')) }}">
             <select name="order">
@@ -169,8 +192,12 @@
         <div class="container">
             <div class="news-list">
                 @foreach($news as $newsItem)
-                    <a href="{{ url('/dashboard/'.$user_id.'/manage_news/'.$newsItem['news_id']) }}" class="news-item-container">
-                        {{ $newsItem['title'] }}
+                    <a href="{{ url('/dashboard/manage_news/'.$newsItem['news_id']) }}" class="news-item-container">
+                        <div class="news-title">{{ $newsItem['title'] }}</div>
+                        <div class="news-item-meta">
+                            <div class="news-views"> {{ $newsItem['views'] }} views</div>
+                            <div class="news-date"> {{ \Carbon\Carbon::parse($newsItem['created_at'])->format('M j, Y') }}</div>
+                        </div>
                     </a>
                 @endforeach
             </div>
@@ -184,22 +211,26 @@
                         </div>
                     </div>
                     <div class="action-buttons">
-                        <form action="{{ url('/dashboard/'.$user_id.'/manage_news/delete_news/'.$selectedNews->news_id) }}" method="POST" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <input type="hidden" name="news_id" value="{{ $selectedNews->news_id }}">
-                            <button type="submit">Delete</button>
-                        </form>
-                        <form action="{{ url('/dashboard/'.$user_id.'/manage_news/edit_news/'.$selectedNews->news_id ) }}" method="GET" class="action-form" style="display:inline;">
-                            <button type="submit">Edit</button>
-                        </form>
-                        <form action="{{ url('/dashboard/'.$user_id.'/manage_news') }}" method="GET" class="action-form" style="display:inline;">
+                        @can('delete', $selectedNews)
+                            <form action="{{ url('/dashboard/manage_news/delete_news/'.$selectedNews->news_id) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <input type="hidden" name="news_id" value="{{ $selectedNews->news_id }}">
+                                <button type="submit">Delete</button>
+                            </form>
+                        @endcan
+                        @can('update', $selectedNews)
+                            <form action="{{ url('/dashboard/manage_news/edit_news/'.$selectedNews->news_id ) }}" method="GET" class="action-form" style="display:inline;">
+                                <button type="submit">Edit</button>
+                            </form>
+                        @endcan
+                        <form action="{{ url('/dashboard/manage_news') }}" method="GET" class="action-form" style="display:inline;">
                             <button type="submit">Back</button>
                         </form>
                     </div>
                 @else
                     <div class="empty-state">
-                        <a href="{{ url('/dashboard/'.$user_id.'/manage_news/create_news') }}" class="create-button">Create News</a>
+                        <a href="{{ url('/dashboard/manage_news/create_news') }}" class="create-button">Create News</a>
                     </div>
                 @endif
             </div>
