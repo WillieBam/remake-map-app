@@ -18,10 +18,10 @@
     </select><br><br>
     <a href="/changePassword/{{$data['user_id']}}">Change Password</a><br><br>
     <input type="submit" value="Update">
-    @if(isset($success)&&$success)
-        <span>{{$success}}</span>
-    @elseif(isset($successPassword)&&$successPassword)
-        <span>{{$successPassword}}</span>
+    @if(session()->has('success'))
+        <span>{{session('success')}}</span>
+    @elseif(session()->has('successPassword'))
+        <span>{{session('successPassword')}}</span>
     @endif
     @if ($errors->any())
         <div>
