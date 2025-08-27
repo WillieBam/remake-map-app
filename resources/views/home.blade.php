@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>Countries List</title>
-   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
   <style>
     body {
@@ -19,6 +19,8 @@
     .container {
       max-width: 1200px;
       margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
       padding: 20px;
     }
 
@@ -31,67 +33,13 @@
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
-    .country-card {
-      background: white;
-      border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 15px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-      transition: transform 0.2s, box-shadow 0.2s;
-      border-left: 4px solid #4CAF50;
-    }
-
-    .country-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .country-link {
-      color: #333;
-      text-decoration: none;
-      font-weight: 500;
-      font-size: 18px;
-      display: block;
-      padding: 10px;
-    }
-
-    .country-link:hover {
-      color: #4CAF50;
-    }
-
-    .country-region {
-      color: #6c757d;
-      font-size: 0.9em;
-      margin-left: 10px;
-    }
-
     .search-box {
       margin-bottom: 30px;
     }
 
-    .message-card {
-      background: #f9f9f9;
-      border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 15px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    }
 
     .message-content {
       margin-bottom: 10px;
-    }
-
-    .success-notification {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #4CAF50;
-      color: white;
-      padding: 15px 20px;
-      border-radius: 4px;
-      z-index: 2000;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
     .add-message-btn {
@@ -99,130 +47,215 @@
       color: white;
       border: none;
     }
-
-    .add-message-btn:hover {
-      background-color: #45a049;
-      color: white;
-    }
-
-    .country-counter {
-      background-color: #e9ecef;
-      color: #495057;
-      padding: 3px 8px;
-      border-radius: 10px;
-      font-size: 0.8em;
-      margin-left: 10px;
-    }
   </style>
 </head>
 
 <body>
 
+  <div class="page-header">
+    <h1>Countries</h1>
+  </div>
 
+  <!--search bar-->
+  <div class="search-box">
+    <div>
+      <div style="text-align:center;">
+        <span></span>
+        <input id="search_country" style=" width: 500px; height: 30px; border: none; border-bottom: 2px solid gray;" type="text" name="search_country" placeholder="Search countries...">
+        <button style=" width: 70px; height: 30px;" onclick="query()">Search</button>
+      
+        <select id="continent-filter">
+          <option value="0">All</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <script>
+    window.onload=function(){
+      fetch("{{ route('continents') }}")
+      .then((response)=>response.json())
+      .then((continents)=>{
+        //console.log(response);
+        const filter = document.getElementById('continent-filter');
+        
+        for(let continent of continents){
+            let option = document.createElement('option');
+            option.innerText = continent.name;
+            option.value = continent.continent_id;
+            filter.appendChild(option);
+        }
+      })
+      .catch((error)=>console.err());
+
+    }
+
+    function query() {
+      fetch("{{ route('countries.query') }}", {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+
+            keyword: document.getElementById("search_country").value,
+            continent:document.getElementById("continent-filter").value,
+
+          })
+        }, )
+        .then(
+          (response) => response.json()
+        )
+        .then((response) => {
+
+          let divCountryList = document.getElementById("countries-list");
+          let divCountries = Array.from(divCountryList.children);
+
+          for (let i = 0; i<divCountries.length; i++){// divCountry in divCountries) {
+            for (let search_result of response.search_results) {
+              //console.log(divCountryList.children[i].getAttribute('name'));
+              
+            if (search_result.country_id != divCountryList.children[i].getAttribute('name')) {
+               divCountryList.children[i].style.display = 'none'; 
+            }else{
+              divCountryList.children[i].style.display = 'block'; 
+              break;
+            }
+
+
+             
+             
+
+
+
+          }
+        }
+
+        })
+        .catch((error) => console.log(error));
+
+    }
+  </script>
 
   <div class="container">
-    <div class="page-header">
-      <h1>Countries</h1>
-    </div>
-
-    <!--search bar-->
-    <div>
-      <div>
-        <form action="{{route('countries.search')  }}" method="GET">
-          <span class="input-group-text"></span>
-          <input type="text" name="search_country" placeholder="Search countries...">
-          <button type="submit">Search</button>
-        </form>
-      </div>
-    </div>
-
-
-
     <!--message board-->
-    @if(isset($country_data))
-    <button type="button" class="btn add-message-btn" id="post-message" onclick="toggleForm()" > Post Message </button>
-  
-    <div id="post-message-form" style="display:none; margin-top:10px;" >
-      <h3>Message for {{$country_data->name}} </h3>
-     
-      <form  
-        action="{{ route('message.add', ['id' => $country_data->country_id]) }}"
-        method="POST">
-         @csrf  
-            
-            <textarea name="content" rows="5" placeholder="Write your message..."></textarea>
-            @error('content')
-            <div style="color:red">{{ $message }}</div>
-            @enderror
-            <input type="hidden" name="user_id" value={{ auth()->id() }}>  
-            <button type="submit">Submit</button>
+    <div class="message-view">
+      @if(isset($country_data))
+      @if(auth()->check())
+      <button type="button" class="btn add-message-btn" id="post-message" onclick="toggleForm()"> Post Message </button>
+
+      <div id="post-message-form" style="display:none; margin-top:10px;">
+        <h3>Message for {{$country_data->name}} </h3>
+
+        <form
+          action="{{ route('message.add', ['id' => $country_data->country_id]) }}"
+          method="POST">
+          @csrf
+
+          <textarea name="content" rows="5" placeholder="Write your message..."></textarea>
+          @error('content')
+          <div style="color:red">{{ $message}}</div>
+          @enderror
+          <button type="submit">Submit</button>
         </form>
-    </div>
-    @if(session('success'))
-      <div class="alert alert-success">
-        {{ session('success') }}
       </div>
     @endif
-    
-    <div id="messages-list">
-      <h2>Messages</h2>
-      @forelse($messages as $message)
-      <p>{{ $message->content}}<i id="report-flag" class="bi bi-flag" style="text-align:right; margin-left:30px;"></i></p>      
-      <div>Posted on {{ date('M d, Y', strtotime($message->created_at)) }} • {{ $message->views }} views </div>
-      @empty
-      <p>No messages</p>
-      @endforelse
-    </div>  
 
-    <script>
-              
-      const form = document.getElementById('post-message-form');
-      const list = document.getElementById('messages-list');
-      const postButton = document.getElementById('post-message');
+      @if(session('success'))
+      <div class="alert alert-success" style="color:#45a049">
+        {{ session('success') }}
+      </div>
+      @endif
 
-      function showList(){
+      <div id="messages-list">
+        <h2>Messages Board for {{ $country_data->name }} </h2>
+        @forelse($messages as $message)
+
+        <p>{{ $message->content}}
+
+          @if (auth()->check())
+        <form method="POST" action="">
+          @csrf
+          <button type="submit" style="border: none; background:none; cursor: pointer;">
+            <i id="report-flag" class="bi bi-flag" style="color:red; text-align:right; margin-left:15px;"></i>
+          </button>
+        </form>
+
+
+        @can('delete',$message)
+        <form method="POST" action="{{route('message.delete',[$country_data->country_id,$message->message_id])  }}">
+          @csrf
+          <button type="submit" style="border: none; background:none; cursor: pointer;">
+            <i id="delete-trash" class="bi bi-trash" style="color:red; text-align:right; margin-left:15px;"></i>
+          </button>
+        </form>
+        @endcan
+        @endif
+
+        </p>
+        <div>Posted on {{ date('M d, Y', strtotime($message->created_at)) }} • {{ $message->views }} views </div>
+        @empty
+        <p>No messages</p>
+        @endforelse
+      </div>
+
+      <script>
+        const form = document.getElementById('post-message-form');
+        const list = document.getElementById('messages-list');
+        const postButton = document.getElementById('post-message');
+
+        function showList() {
           form.style.display = "none";
           list.style.display = "block";
           postButton.style.display = "block";
-      }
-      function showForm(){
-        form.style.display = "block";
-        list.style.display = "none";
-        postButton.style.display="none";
-
-      }
-
-      function toggleForm(){
-          if (form.style.display === "none"){
-            showForm();
-           
-          }else{
-            showList();
-            window.history.pushState({view:'list'}, "", window.location.pathname);
         }
-      }
-        
-    window.addEventListener("popstate",function(event){
-      if(event.state && event.state.view === "form"){
-        showForm();
-      }else{
-        showList();
-      }
-    });
 
-    window.addEventListener("DOMContentLoaded", function(){
-      if(window.location.pathname.endsWith('/create-message')){
-        showForm();
-        window.history.replaceState({view:"form"},"");
-      }else{
-        showList();
-        window.history.replaceState({view:"list"},"");
-      }
-    });
-    </script>
+        function showForm() {
+          form.style.display = "block";
+          list.style.display = "none";
+          postButton.style.display = "none";
+
+        }
+
+        function toggleForm() {
+          if (form.style.display === "none") {
+            showForm();
+
+          } else {
+            showList();
+            window.history.pushState({
+              view: 'list'
+            }, "", window.location.pathname);
+          }
+        }
+
+        window.addEventListener("popstate", function(event) {
+          if (event.state && event.state.view === "form") {
+            showForm();
+          } else {
+            showList();
+          }
+        });
+
+        window.addEventListener("DOMContentLoaded", function() {
+          if (window.location.pathname.endsWith('/create-message')) {
+            showForm();
+            window.history.replaceState({
+              view: "form"
+            }, "");
+          } else {
+            showList();
+            window.history.replaceState({
+              view: "list"
+            }, "");
+          }
+        });
+      </script>
+    </div>
+
 
 
     <!--news board-->
+    <div class="news-view">
       <h2>News</h2>
       @forelse($news as $n)
       <p>{{ $n->title }}</p>
@@ -231,26 +264,38 @@
       @empty
       <p>No news</p>
       @endforelse
-  @endif
-
-    <!-- country list -->
-    @if($countries->count() > 0)
-    <div id="countries-list" class="row">
-      @foreach($countries as $country)
-      <div>
-      <div>
-      <a href="{{ route('countries.show', ['id' => $country->country_id]) }}">
-      <span>{{$country->name}}</span>
-      @if(isset($country->continent_id))
-      <span>Continent #{{ $country->continent_id }}</span>
       @endif
-      </a>
+
+      <!-- country list -->
+      @if($countries->count() > 0)
+      <div id="countries-list" class="row">
+        @foreach($countries as $country)
+        <div name="{{ $country->country_id }}">
+
+          <div>
+            <a href="{{ route('countries.show', ['id' => $country->country_id]) }}">
+              <span>{{$country->name}}</span>
+              @if(isset($country->continent_id))
+              <span>{{ $country->continent->name }}</span>
+              @endif
+            </a>
+          </div>
+        </div>
+        @endforeach
       </div>
-      </div>
-    @endforeach
+
     </div>
 
-    <!--search result-->
+
+
+
+
+</body>
+
+</html>
+
+<!--
+ 
   @elseif ($search_results->count() > 0)
     <div id="countries-list" class="row">
       @foreach($search_results as $search)
@@ -258,8 +303,8 @@
       <div>
       <a href="{{ route('countries.show', ['id' => $search->country_id]) }}">
       <span>{{$search->name}}</span>
-      @if(isset($search->continent_id))
-      <span>Continent #{{ $search->continent_id }}</span>
+      @if(isset($search->continent->name))
+      <span>Continent {{ $search->continent->name }}</span>
       @endif
       </a>
       </div>
@@ -271,14 +316,10 @@
       No countries available.
     </div>
   @endif
+  </div>
 
 
 
-</body>
-
-</html>
-
-<!--
 <script>
       const vizData = {
         "8":{"name":"Albania","population":2829741},
