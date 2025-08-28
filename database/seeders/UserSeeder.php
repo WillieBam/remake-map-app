@@ -38,7 +38,7 @@ class UserSeeder extends Seeder
                 $adminId = ($countryId - 1) * 3 + $id; // Unique ID for each admin
 
                 DB::table('users')->insert([
-                    'country_id' => rand(1, 195), // Assuming you have 195 countries
+                    'country_id' => $countryId, // Assuming you have 195 countries
                     'role_id' => 2, // 2 is the ID for 'continent admin' role
                     'name' => 'ContinentAdmin' . $adminId,
                     'email' => 'continentadmin' . $adminId . '@gmail.com',
