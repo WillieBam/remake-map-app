@@ -33,10 +33,11 @@ require __DIR__.'/auth.php';
 
 //news routes
 
+ //view specific news, after users click the news list
+    Route::get('/country/{country_id}/news/{news_id}', [newsController::class, 'viewNews']);
+
 Route::controller(newsController::class)->middleware(['auth'])->group(function () {
 
-    //view specific news, after users click the news list
-    Route::get('/country/{country_id}/news/{news_id}','viewNews');
 
     //create news
     Route::get('/dashboard/manage_news/create_news', 'viewCreateNews');

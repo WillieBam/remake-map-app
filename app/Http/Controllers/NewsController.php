@@ -69,11 +69,8 @@ class newsController extends Controller
     }
 
     //view specific news
-    function viewNews($news_id){
+    function viewNews($country_id, $news_id){
         $news = News::find($news_id);
-        if (!$news) {
-            return back()->with('error', 'News not found.');
-        }
         return view('viewNews', ['news' => $news]);
     }
 
