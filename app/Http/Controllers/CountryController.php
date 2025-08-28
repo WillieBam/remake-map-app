@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Message;
 use App\Models\Country;
+use Illuminate\Support\Facades\Cookie;
 class CountryController extends Controller
 {
     function index($country_id=null){
@@ -36,6 +37,7 @@ class CountryController extends Controller
     function queryCountry(Request $request){
        $search = $request->keyword; 
        $filter=$request->continent;
+
                                                 //name of the input field in the form
                                                 // SQL 'like' operator --> SQL query: where column_name like %+"search" +%;
        $result = Country::where('name','like',"%$search%")->get();
@@ -43,7 +45,9 @@ class CountryController extends Controller
         $result = Country::where([['name','like',"%$search%"],['continent_id','=',$filter]])->get();
        }  
 
-       return response(['search_results'=>$result, 'countries'=>collect()]);
+       return response(['search_results'=>$result, 'countries'=>collect()])
+       ->cookie('country_search', $search, 60,'/',null,true,true)
+       ->cookie('country_filter', $filter, 60,'/',null,true,true);
     }
 
     
