@@ -173,8 +173,9 @@
         <p>{{ $message->content}}
 
           @if (auth()->check())
-        <form method="POST" action="">
+        <form method="POST" action="{{ route('reports.add', [$country_data->country_id,$message->message_id]) }}">
           @csrf
+          <input type="hidden" name="message_id" value="{{ $message->message_id }}">
           <button type="submit" style="border: none; background:none; cursor: pointer;">
             <i id="report-flag" class="bi bi-flag" style="color:red; text-align:right; margin-left:15px;"></i>
           </button>

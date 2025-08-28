@@ -33,7 +33,7 @@ class ReportController extends Controller
         return $serialized;
     }
 
-    public function store(Request $request, $country_id)
+    public function store(Request $request, $country_id, $message_id)
     {
         // Get the authenticated user who reported the message
         $user_id = $request->user()->user_id;
@@ -46,11 +46,12 @@ class ReportController extends Controller
         $exactMatch = Report::where([
             ['user_id', '=', $user_id],
             ['message_id', '=', $request->input('message_id')],
-        ]);
+        ])->first();
 
         if ($exactMatch) // User already reported this message before
         {
-            return response('No');
+            return redirect()->route('countries.show', ['id' => $country_id])
+                ->with('success', 'Already reported!');
         }
         
         // Create new report
@@ -58,8 +59,9 @@ class ReportController extends Controller
         $report->user_id = $user_id;
         $report->save();
 
-        // Redirect back to previous page
-        return redirect('/countries/' . $country_id);
+        // Redirect back
+        return redirect()->route('countries.show', ['id' => $country_id])
+            ->with('success', 'Reported successfully!');
     }
 
     public function index($message_id = null)

@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\CountryController;
-use App\Http\Controllers\MessagesController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\newsController;
 
@@ -20,11 +20,12 @@ use App\Http\Controllers\newsController;
 
 
 //Route::view('/','welcome');
+Route::get('/', function() { return redirect('/countries'); });
 Route::get('/countries', [CountryController::class, 'index'])->name('countries.index');
 
 Route::get('/countries/{id}', [CountryController::class, 'index'])->name('countries.show');
-Route::post('/countries/{id}/create-message', [MessagesController::class, 'store'])->name('message.add');
-Route::post('/countries/{cid}/delete-message/{mid}',[MessagesController::class,'delete'])->name('message.delete');
+Route::post('/countries/{id}/create-message', [MessageController::class, 'store'])->name('message.add');
+Route::post('/countries/{cid}/delete-message/{mid}',[MessageController::class,'delete'])->name('message.delete');
 // Route::get('/deleteUser/{userId}',[UserController::class,'deleteUser']);
 Route::get('/deleteUser/{userId}/{adminId}',[UserController::class,'deleteUser']);
 Route::get('/deleteAdmin/{userId}',[UserController::class,'deleteAdmin']);
@@ -38,13 +39,12 @@ Route::get('/changePassword/{userId}',[UserController::class,'viewChangePassword
 Route::post('/changePassword/{userId}',[UserController::class,'changePassword']);
 Route::get('/viewCreateAdmin',[UserController::class,'viewCreateAdmin']);
 Route::post('/viewCreateAdmin',[UserController::class,'createAdmin']);
-Route::get('/', function () {
-    return view('welcome');
-});
 
 Route::post('/countries/{cid}/delete-message/{mid}', function() {})->name('message.delete');
 
 // Report routes
+Route::post('/countries/{cid}/report-message/{mid}', [ReportController::class, 'store'])->name('reports.add');
+
 Route::group(['middleware' => ['auth', 'can:admin']], function() {
     Route::get('/dashboard/reports', [ReportController::class, 'index'])->name('reports.view');
     Route::get('/dashboard/reports/{message_id}', [ReportController::class, 'index'])->name('reports.show');
