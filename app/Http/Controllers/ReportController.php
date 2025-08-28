@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Str;
 use \App\Models\Report;
 
@@ -92,8 +93,16 @@ class ReportController extends Controller
 
         $serializedReports = $this->serializeReports($allReports);
 
+        $search = Cookie::get('report-search');
+        $filter = Cookie::get('report-filter');
+
         // Pass reduced reports to views
-        return view('viewReports', ['reports' => $serializedReports, 'selectedReport' => $serializedReport]);
+        return view('viewReports', [
+            'reports' => $serializedReports,
+            'selectedReport' => $serializedReport,
+            'search' => $search,
+            'filter' => $filter
+        ]);
     }
 
     public function query(Request $request)
@@ -118,8 +127,11 @@ class ReportController extends Controller
                 ->filter(function($report) use ($search) { return !empty($search) ? Str::contains($report->message->content, $search) : true; })
                 ->values();
         }
-
-        return response($results);
+        
+        // Set cookie after performing query (search/filter)
+        return response($results)
+            ->cookie('report-search', $search, 60, '/', null, true, true)
+            ->cookie('report-filter', $filter, 60, '/', null, true, true);
     }
 
     /* Deprecated */

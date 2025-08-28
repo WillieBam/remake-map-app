@@ -39,10 +39,10 @@
             <div class="panel">
                 <h3>Reports</h3>
                 <div>
-                    <input id="search_report" style=" width: 500px; height: 30px; border: none; border-bottom: 2px solid gray;" type="text" name="search_report" placeholder="Search reports...">
+                    <input id="search_report" value="{{ $search }}" style=" width: 500px; height: 30px; border: none; border-bottom: 2px solid gray;" type="text" name="search_report" placeholder="Search reports...">
                     <button style=" width: 70px; height: 30px;" onclick="query()">Search</button>
                 
-                    <select id="country-filter">
+                    <select id="country-filter"">
                         <option value="0">All</option>
                         @php
                             $countries = array_unique(array_map(function($report) { return $report['message']['country']; }, $reports));
@@ -50,6 +50,7 @@
 
                         @foreach ($countries as $country)
                         <option value="{{ $country['country_id'] }}">{{ $country['name'] }}</option>
+                        <option {{ $country['country_id'] == $filter ? "selected" : "" }} value="{{ $country['country_id'] }}">{{ $country['name'] }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -88,6 +89,8 @@
                         })
                         .catch((error) => console.log(error));
                     }
+
+                    query();
                 </script>
 
                 <div id="reports-list">
