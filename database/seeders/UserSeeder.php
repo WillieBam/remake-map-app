@@ -18,6 +18,8 @@ class UserSeeder extends Seeder
         // Insert 3 global admins
         for ($id = 1; $id <= 3; $id++)
         {
+            $randomTimestamp = now()->subDays(rand(0, 365))->subMinutes(rand(0, 1440));
+
             DB::table('users')->insert([
                 'country_id' => rand(1, 195), // Random country ID
                 'role_id' => 1, // 1 is the ID for 'global admin' role
@@ -25,7 +27,7 @@ class UserSeeder extends Seeder
                 'email' => 'globaladmin' . $id . '@gmail.com',
                 'password' => bcrypt('GlobalAdmin' . $id),
                 'is_banned' => false,
-                'created_at' => now(),
+                'created_at' => $randomTimestamp,
                 'updated_at' => NULL,
             ]);
         }
@@ -35,6 +37,8 @@ class UserSeeder extends Seeder
         {
             for ($id = 1; $id <= 3; $id++)
             {
+                $randomTimestamp = now()->subDays(rand(0, 365))->subMinutes(rand(0, 1440));
+
                 $adminId = ($countryId - 1) * 3 + $id; // Unique ID for each admin
 
                 DB::table('users')->insert([
@@ -44,7 +48,7 @@ class UserSeeder extends Seeder
                     'email' => 'continentadmin' . $adminId . '@gmail.com',
                     'password' => bcrypt('ContinentAdmin' . $adminId),
                     'is_banned' => false,
-                    'created_at' => now(),
+                    'created_at' => $randomTimestamp,
                     'updated_at' => NULL,
                 ]);
             }
@@ -53,6 +57,8 @@ class UserSeeder extends Seeder
         // Insert 100 users
         for ($id = 1; $id <= 100; $id++)
         {
+            $randomTimestamp = now()->subDays(rand(0, 365))->subMinutes(rand(0, 1440));
+
             DB::table('users')->insert([
                 'country_id' => rand(1, 195), // Assuming you have 10
                 'role_id' => 3, // 3 is the ID for 'user' role
@@ -60,9 +66,8 @@ class UserSeeder extends Seeder
                 'email' => 'user' . $id . '@gmail.com',
                 'password' => bcrypt('User' . $id),
                 'is_banned' => false,
-                'created_at' => now(),
+                'created_at' => $randomTimestamp,
                 'updated_at' => NULL,
-
             ]);
         }
     }

@@ -13,10 +13,13 @@ class ReportSeeder extends Seeder
      */
     public function run()
     {
-         for($i = 0;$i<100;$i++){
+         for ($i = 0; $i < 100; $i++) {
+            
             DB::table('reports')->insert([
-                'user_id' => rand(0,50),
-                'message_id' => rand(0,1000),
+                'user_id' => rand(0, 100),
+                'message_id' => rand(0, 100),
+                'created_at' => now(),
+                'updated_at' => NULL,
             ]);
         }
     }

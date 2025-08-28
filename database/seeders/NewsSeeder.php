@@ -16,12 +16,13 @@ class NewsSeeder extends Seeder
      */
     public function run()
     {
-        for ($i=0; $i<100;$i++){
+        for ($i = 0; $i < 100; $i++){
             $randomTimestamp = now()->subDays(rand(0, 365))->subMinutes(rand(0, 1440));
+
             DB::table('News')->insert([
                 'title' => Str::random(50),
-                'user_id' => rand(1,500),
-                'country_id' => rand(1,195),
+                'user_id' => rand(1, 500),
+                'country_id' => rand(1, 195),
                 'content' => Str::random(200),
                 'views' => rand(0, 1000),
                 'created_at' => $randomTimestamp

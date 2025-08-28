@@ -21,8 +21,6 @@ class CreateNewsTable extends Migration
             $table->text('content');
             $table->integer('views')->default(0);
             $table->timestamps();
-            
-
         });
     }
 

@@ -15,14 +15,16 @@ class MessageSeeder extends Seeder
      */
     public function run()
     {
-       
-    for ($i = 1; $i<101; $i++){
-        DB::table('messages')->insert([
-            'user_id' =>$i,
-            'country_id'=>random_int(1, 195),
-            'content'=>$i,
-            'views'=>$i,
-        ]);
-    }
+        for ($i = 1; $i < 101; $i++){
+            $randomTimestamp = now()->subDays(rand(0, 365))->subMinutes(rand(0, 1440));
+            
+            DB::table('messages')->insert([
+                'user_id' => $i,
+                'country_id'=> rand(1, 195),
+                'content'=> Str::random(100),
+                'views'=> rand(1, 1000),
+                'created_at' => $randomTimestamp
+            ]);
+        }
     }
 }

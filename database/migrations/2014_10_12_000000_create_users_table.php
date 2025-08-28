@@ -19,7 +19,6 @@ class CreateUsersTable extends Migration
             $table->foreignId('role_id')->default('3')->constrained('roles', 'role_id')->onDelete('set null');
             $table->string('name');
             $table->string('email');
-            // $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->boolean('is_banned')->default(0);
             $table->timestamps();
