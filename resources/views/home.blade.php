@@ -61,7 +61,11 @@
     <div>
       <div style="text-align:center;">
         <span></span>
+        @if(Cookie::has('country_search'))
+        <input id="search_country" value="{{ Cookie::get('country_search') }}"style=" width: 500px; height: 30px; border: none; border-bottom: 2px solid gray;" type="text" name="search_country" placeholder="Search countries...">
+        @else
         <input id="search_country" style=" width: 500px; height: 30px; border: none; border-bottom: 2px solid gray;" type="text" name="search_country" placeholder="Search countries...">
+        @endif
         <button style=" width: 70px; height: 30px;" onclick="query()">Search</button>
       
         <select id="continent-filter">
@@ -80,6 +84,10 @@
         
         for(let continent of continents){
             let option = document.createElement('option');
+            let filter_cookie = "{{(Cookie::get('country_filter'))}}";
+              if(filter_cookie == continent.continent_id){
+                option.selected = true; // continent.continent_id
+              }
             option.innerText = continent.name;
             option.value = continent.continent_id;
             filter.appendChild(option);
@@ -122,18 +130,15 @@
             }
 
 
-             
-             
-
-
-
           }
         }
 
         })
         .catch((error) => console.log(error));
-
     }
+
+    query();
+    
   </script>
 
   <div class="container">
