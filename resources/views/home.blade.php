@@ -152,11 +152,14 @@
           @csrf
 
           <textarea name="content" rows="5" placeholder="Write your message..."></textarea>
-          @error('content')
-          <div style="color:red">{{ $message}}</div>
-          @enderror
+          
           <button type="submit">Submit</button>
         </form>
+      </div>
+      <div>
+          @error('content')
+          <div style="color:red">{{ $message }}</div>
+          @enderror
       </div>
     @endif
 
@@ -173,6 +176,7 @@
         <p>{{ $message->content}}
 
           @if (auth()->check())
+          @can('create')
         <form method="POST" action="{{ route('reports.add', [$country_data->country_id,$message->message_id]) }}">
           @csrf
           <input type="hidden" name="message_id" value="{{ $message->message_id }}">
@@ -182,7 +186,7 @@
         </form>
 
 
-        @can('delete',$message)
+        @elsecan('delete',$message)
         <form method="POST" action="{{route('message.delete',[$country_data->country_id,$message->message_id])  }}">
           @csrf
           <button type="submit" style="border: none; background:none; cursor: pointer;">
