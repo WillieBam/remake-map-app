@@ -4,44 +4,44 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Message;
-use Illuminate\Support\Facades\DB;
 
 class MessagesController extends Controller
 {
-    function createMessage(Request $request){
-        // validate message
-        $validateMessage = $request->validate([
+    /**
+     // user post message  
+    */
+    function store(Request $request, $country_id){
+
+      //$this->authorize('createMessage',Message::class);
+        //validate message
+        $validate_message = $request->validate([
             'content'=> 'required|min:10|max:500',
         ]);
-        // after validate, dump into Message table
-        Message::create($validateMessage);
 
-        // refresh the page and update the latest message
-        
-        return redirect()->route('');
+        // create message with country id
+        $create_message = Message::create([
+            'content' => $validate_message['content'],
+            'user_id' => auth()->id(),
+            'country_id' => $country_id,
+            'views' => 0
+        ]);
+       
+
+        return redirect()->route('countries.show', ['id' => $country_id])
+                     ->with('success', 'Message posted successfully!');
+    }
+
+    function delete($country_id,$message_id){
+        $to_delete = Message::where('message_id',$message_id)->delete();
+
+            return redirect()->route('countries.show', ['id' => $country_id])
+            ->with('success', 'Message deleted successfully!');
 
     }
 
-    function deleteMessage($message_id){
-
-        // admin perform delete message
-    }
 
 
-    function getCountryMessages($country_id){
 
-        //show country message 
-    }
-
-    function getUserMessages($user_id){
-
-        // past messages posted by a user when inside user profile
-    }
-
-    function reportMessage($message_id){
-
-        // normal user can report message
-    }
 
 
 }

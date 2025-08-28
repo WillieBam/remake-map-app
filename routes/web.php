@@ -2,7 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\CountryController;
+use App\Http\Controllers\MessagesController;
 use App\Http\Controllers\UserController;
+use Symfony\Component\Mime\MessageConverter;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,6 +17,14 @@ use App\Http\Controllers\UserController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+
+//Route::view('/','welcome');
+Route::get('/countries', [CountryController::class, 'index'])->name('countries.index');
+
+Route::get('/countries/{id}', [CountryController::class, 'index'])->name('countries.show');
+Route::post('/countries/{id}/create-message', [MessagesController::class, 'store'])->name('message.add');
+Route::post('/countries/{cid}/delete-message/{mid}',[MessagesController::class,'delete'])->name('message.delete');
 Route::get('/deleteUser/{userId}',[UserController::class,'deleteUser']);
 Route::get('/deleteAdmin/{userId}',[UserController::class,'deleteAdmin']);
 Route::get('/profile/{userId}',[UserController::class,'viewUser']);
@@ -39,3 +51,4 @@ Route::get('/dashboard', function () {
 })->middleware(['auth'])->name('dashboard');
 
 require __DIR__.'/auth.php';
+
