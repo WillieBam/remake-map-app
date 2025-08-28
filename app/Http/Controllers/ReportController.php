@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use \App\Models\Report;
 
 class ReportController extends Controller
@@ -12,22 +14,6 @@ class ReportController extends Controller
         $serialized = [];
 
         foreach ($reports as $report) {
-            // Load relationships
-            $report->message;
-            if (!$report->message) {
-                continue; // Skip if message is not found
-            }
-            
-            $report->message->getUser;
-            if (!$report->message->getUser) {
-                continue; // Skip if author is not found
-            }
-
-            $report->user;
-            if (!$report->user) {
-                continue; // Skip if reporter is not found
-            }
-
             // Initialize report structure if not exists
             if (!array_key_exists($report->mesage_id, $serialized))
             {
@@ -47,7 +33,7 @@ class ReportController extends Controller
         return $serialized;
     }
 
-    public function createReport(Request $request, $country_id)
+    public function store(Request $request, $country_id)
     {
         // Get the authenticated user who reported the message
         $user_id = $request->user()->user_id;
@@ -56,6 +42,16 @@ class ReportController extends Controller
         $request->validate([
             'message_id' => 'required|exists:messages,message_id',
         ]);
+
+        $exactMatch = Report::where([
+            ['user_id', '=', $user_id],
+            ['message_id', '=', $request->input('message_id')],
+        ]);
+
+        if ($exactMatch) // User already reported this message before
+        {
+            return response('No');
+        }
         
         // Create new report
         $report = Report::create($request->input());
@@ -66,17 +62,12 @@ class ReportController extends Controller
         return redirect('/countries/' . $country_id);
     }
 
-    public function viewReports()
-    {
-        return $this->viewReportsWithId(-1);
-    }
-
-    public function viewReportsWithId($message_id)
+    public function index($message_id = null)
     {
         // Summarize reports based on message_id
         $serializedReport = [];
 
-        if ($message_id > -1)
+        if ($message_id)
         {
             $selectedReports = Report::where('message_id', '=', $message_id)->get();
 
@@ -91,13 +82,46 @@ class ReportController extends Controller
         }
 
         // Summarize all reports based on message_id
-        $allReports = Report::all();
+        $allReports = Report::with(['message.country'])
+            ->get()
+            ->filter(function($report) { return !empty($report->message); })
+            ->filter(function($report) { return $report->message->country->continent_id == Auth::user()->country->continent_id; })
+            ->values();
+
         $serializedReports = $this->serializeReports($allReports);
 
         // Pass reduced reports to views
         return view('viewReports', ['reports' => $serializedReports, 'selectedReport' => $serializedReport]);
     }
 
+    public function query(Request $request)
+    {
+        $search = $request->keyword;
+        $filter = $request->country;
+
+        $results = [];
+
+        if ($filter == 0) {
+            $results = Report::with(['user', 'message.country'])
+                ->get()
+                ->filter(function($report) { return !empty($report->message); })
+                ->filter(function($report) { return $report->message->country->continent_id == Auth::user()->country->continent_id; })
+                ->filter(function($report) use ($search) { return !empty($search) ? Str::contains($report->message->content, $search) : true; })
+                ->values();
+        } else {
+            $results = Report::with(['user', 'message.country'])
+                ->get()
+                ->filter(function($report) { return !empty($report->message); })
+                ->filter(function($report) use ($filter) { return $report->message->country_id == $filter; })
+                ->filter(function($report) use ($search) { return !empty($search) ? Str::contains($report->message->content, $search) : true; })
+                ->values();
+        }
+
+        return response($results);
+    }
+
+    /* Deprecated */
+    /*
     public function searchReports(Request $request)
     {
         // Validate the search input
@@ -127,4 +151,5 @@ class ReportController extends Controller
         // Return the view with the serialized reports
         return view('viewReports', ['reports' => $serializedReports, 'selectedReport' => []]);
     }
+    */
 }

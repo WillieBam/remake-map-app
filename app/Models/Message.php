@@ -21,20 +21,20 @@ class Message extends Model
     */
     
     // one message belongs to one user
-    public function getUser(){
+    public function user(){
         return $this->belongsTo(User::class, 'user_id', 'user_id');
         
     }
 
     // one message belongs to one country
-    public function getCountry(){
+    public function country(){
      
         return $this ->belongsTo(Country::class, foreignKey:'country_id', ownerKey:'country_id');
 
     }
 
     // one message has many reports
-        public function getReport(){
+        public function report(){
      
         return $this ->hasMany(Report::class, foreignKey:'report_id');
 

@@ -25,10 +25,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::post('/countries/{cid}/delete-message/{mid}', function() {})->name('message.delete');
+
 // Report routes
-Route::get('/dashboard/reports/{message_id}', [ReportController::class, 'viewReportsWithId'])->name('viewReportsWithId');
-Route::get('/dashboard/reports', [ReportController::class, 'viewReports'])->name('viewReports');
-Route::post('/dashboard/reports/search', [ReportController::class, 'searchReports'])->name('searchReports');
+Route::group(['middleware' => ['auth', 'can:admin']], function() {
+    Route::get('/dashboard/reports', [ReportController::class, 'index'])->name('reports.view');
+    Route::get('/dashboard/reports/{message_id}', [ReportController::class, 'index'])->name('reports.show');
+    Route::post('/dashboard/reports/query', [ReportController::class, 'query'])->name('reports.query');
+});
 
 Route::get('/dashboard', function () {
     return view('dashboard');
