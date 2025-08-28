@@ -35,7 +35,7 @@ class newsController extends Controller
         $country = $user->country;
         $continent_id = $country->continent_id;
         $countries = Country::where('continent_id', $continent_id)->get();
-        return view('createNews', ['user_id' => $user->id, 'countries' => $countries]);
+        return view('createNews', ['countries' => $countries]);
     }
 
     //delete news
@@ -66,7 +66,7 @@ class newsController extends Controller
     function viewEditNews($news_id){
         $user = Auth::user();
         $news = News::find($news_id);
-        return view('editNews', ['user_id' => $user->id, 'news_id' => $news_id, 'news' => $news]);
+        return view('editNews', ['news_id' => $news_id, 'news' => $news]);
     }
 
     //view specific news
@@ -96,7 +96,6 @@ class newsController extends Controller
         }
         return view('viewAllNews', [
             'news' => $news,
-            'user_id' => $user->id,
             'selectedNews' => $selectedNews
         ]);
     }
@@ -137,7 +136,6 @@ class newsController extends Controller
         }
         return view('viewAllNews', [
             'news' => $news,
-            'user_id' => $user->id,
             'selectedNews' => null
         ]);
 
