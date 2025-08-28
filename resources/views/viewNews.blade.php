@@ -66,7 +66,7 @@
             <h1>{{ $news->title }}</h1>
             <p style="white-space: normal;">{{ $news->content }}</p>
         </div>
-        <a href="{{ url('/dashboard') }}" class="back-button">Back to Dashboard</a>
+        <button onclick="history.back()" class="back-button">Back</button>
     </div>
 </body>
 </html>

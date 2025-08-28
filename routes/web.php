@@ -19,14 +19,15 @@ use App\Http\Controllers\newsController;
 */
 
 
-//Route::view('/','welcome');
 Route::get('/', function() { return redirect('/countries'); });
-Route::get('/countries', [CountryController::class, 'index'])->name('countries.index');
 
+// Country routes
+Route::get('/countries', [CountryController::class, 'index'])->name('countries.index');
 Route::get('/countries/{id}', [CountryController::class, 'index'])->name('countries.show');
 Route::post('/countries/{id}/create-message', [MessageController::class, 'store'])->name('message.add');
 Route::post('/countries/{cid}/delete-message/{mid}',[MessageController::class,'delete'])->name('message.delete');
-// Route::get('/deleteUser/{userId}',[UserController::class,'deleteUser']);
+
+// User routes
 Route::get('/deleteUser/{userId}/{adminId}',[UserController::class,'deleteUser']);
 Route::get('/deleteAdmin/{userId}',[UserController::class,'deleteAdmin']);
 Route::get('/profile/{userId}',[UserController::class,'viewUser']);
@@ -40,7 +41,9 @@ Route::post('/changePassword/{userId}',[UserController::class,'changePassword'])
 Route::get('/viewCreateAdmin',[UserController::class,'viewCreateAdmin']);
 Route::post('/viewCreateAdmin',[UserController::class,'createAdmin']);
 
-Route::post('/countries/{cid}/delete-message/{mid}', function() {})->name('message.delete');
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth'])->name('dashboard');
 
 // Report routes
 Route::post('/countries/{cid}/report-message/{mid}', [ReportController::class, 'store'])->name('reports.add');
@@ -51,18 +54,10 @@ Route::group(['middleware' => ['auth', 'can:admin']], function() {
     Route::post('/dashboard/reports/query', [ReportController::class, 'query'])->name('reports.query');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
-
-//news routes
-
-//view specific news, after users click the news list
-Route::get('/country/{country_id}/news/{news_id}', [newsController::class, 'viewNews']);
+// News routes
+Route::get('/country/{country_id}/news/{news_id}', [newsController::class, 'viewNews'])->name('news.show');
 
 Route::controller(newsController::class)->middleware(['auth'])->group(function () {
-
-
     //create news
     Route::get('/dashboard/manage_news/create_news', 'viewCreateNews');
     Route::post('/dashboard/manage_news/create_news', 'createNews');
@@ -79,7 +74,7 @@ Route::controller(newsController::class)->middleware(['auth'])->group(function (
 
     //delete news
     Route::delete('/dashboard/manage_news/delete_news/{news_id}', 'deleteNews');
-
 });
 
+// Authentication routes
 require __DIR__.'/auth.php';

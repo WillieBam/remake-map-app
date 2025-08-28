@@ -259,9 +259,11 @@
     <div class="news-view">
       <h2>News</h2>
       @forelse($news as $n)
-      <p>{{ $n->title }}</p>
-      <div>{{ Str::limit($n->content, 100)}}</div>
-      <div>Posted on {{ date('M d, Y', strtotime($n->created_at)) }} • {{ $n->views }} views </div>
+      <a href="{{ route('news.show', [$n->country_id, $n->news_id]) }}">
+        <p>{{ $n->title }}</p>
+        <div>{{ Str::limit($n->content, 100)}}</div>
+        <div>Posted on {{ date('M d, Y', strtotime($n->created_at)) }} • {{ $n->views }} views </div>
+      </a>
       @empty
       <p>No news</p>
       @endforelse

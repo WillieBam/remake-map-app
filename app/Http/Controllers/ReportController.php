@@ -77,7 +77,7 @@ class ReportController extends Controller
             {
                 //session->flash('error', 'No reports found for the selected message.');
 
-                return redirect()->back();
+                return redirect()->route('reports.view');
             }
 
             $serializedReport = $this->serializeReports($selectedReports)[$message_id];

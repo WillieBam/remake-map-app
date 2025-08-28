@@ -31,10 +31,10 @@ class MessageController extends Controller
                      ->with('success', 'Message posted successfully!');
     }
 
-    function delete($country_id,$message_id){
+    function delete(Request $request, $country_id,$message_id){
         $to_delete = Message::where('message_id',$message_id)->delete();
 
-            return redirect()->route('countries.show', ['id' => $country_id])
+            return redirect()->back()
             ->with('success', 'Message deleted successfully!');
 
     }
