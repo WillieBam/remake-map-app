@@ -4,22 +4,25 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
+use App\Models\Country;
 
 class News extends Model
 {
     use HasFactory;
+
+    protected $primaryKey = 'news_id';
+    protected $table = 'news';
     public $timestamps = true;
-        protected $primaryKey = 'news_id';
-    //country_id and user_id not sure..
     protected $fillable = ['title','content','user_id','country_id'];
 
-    public function getUser()
+    public function user()
     {
         return $this->hasOne(User::class);
     }
 
-    public function getCountry()
+    public function country()
     {
-        return $this->belongsTo(Country::class);
+        return $this->belongsTo(Country::class, 'country_id', 'country_id');
     }
 }

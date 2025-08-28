@@ -18,7 +18,7 @@ class CreateNewsTable extends Migration
             $table->foreignId('user_id')->nullable()->constrained('users', 'user_id')->onDelete('set null');
             $table->foreignId('country_id')->nullable()->constrained('countries', 'country_id')->onDelete('set null');
             $table->string('title');
-            $table->string('content');
+            $table->text('content');
             $table->integer('views')->default(0);
             $table->timestamps();
             
