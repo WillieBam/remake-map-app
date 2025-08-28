@@ -22,6 +22,8 @@ Route::get('/banUser/{userId}/{adminId}',[UserController::class,'banUser']);
 Route::get('/banAdmin/{userId}',[UserController::class,'banAdmin']);
 Route::get('/changePassword/{userId}',[UserController::class,'viewChangePassword']);
 Route::post('/changePassword/{userId}',[UserController::class,'changePassword']);
+Route::get('/viewCreateAdmin',[UserController::class,'viewCreateAdmin']);
+Route::post('/viewCreateAdmin',[UserController::class,'createAdmin']);
 Route::get('/', function () {
     return view('welcome');
 });

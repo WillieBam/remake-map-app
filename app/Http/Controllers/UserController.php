@@ -10,8 +10,14 @@ use App\Models\Message;
 use Illuminate\Validation\Rule;
 class UserController extends Controller
 {
-    public function createUser(Request $request)
+    public function viewCreateAdmin(){
+        $this->authorize('isGlobalAdmin',User::Class);
+        $countries = Country::all();
+        return view('viewCreateAdmin',['countries'=>$countries]);
+    }
+    public function createAdmin(Request $request)
     {
+        $this->authorize('isGlobalAdmin',User::Class);
         $request->validate([
             'name' => 'required|string|max:100',
             'email' => 'required|email|unique:users,email',
@@ -21,10 +27,11 @@ class UserController extends Controller
         $user = new User;
         $user -> name = $request -> name;
         $user -> email = $request -> email;
-        $user -> password = bcrypt($request -> password); 
-        $user -> role_id = 3;
+        $user -> country_id = $request -> country_id;
+        $user -> password = Hash::make($request -> password); 
+        $user -> role_id = 2;
         $user -> save();
-        return redirect('viewSignUp')->with('success', 'Sign up successful!');
+        return redirect('viewCreateAdmin')->with('success', 'Create admin successful!');
     }
 
     public function deleteUser($id,$adminId)
