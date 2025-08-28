@@ -15,8 +15,8 @@
         @else
             <td>active</td>
         @endif
-        <td><a href="/deleteUser/{{$user['user_id']}}">delete</a></td>
-        <td><a href="/banUser/{{$user['user_id']}}">ban</a></td>
+        <td><a href="/deleteUser/{{$user['user_id']}}/{{$adminId}}">delete</a></td>
+        <td><a href="/banUser/{{$user['user_id']}}/{{$adminId}}">ban</a></td>
     </tr>
     @endforeach
 </table>

@@ -25,14 +25,19 @@ Route::get('/countries', [CountryController::class, 'index'])->name('countries.i
 Route::get('/countries/{id}', [CountryController::class, 'index'])->name('countries.show');
 Route::post('/countries/{id}/create-message', [MessagesController::class, 'store'])->name('message.add');
 Route::post('/countries/{cid}/delete-message/{mid}',[MessagesController::class,'delete'])->name('message.delete');
-Route::get('/deleteUser/{userId}',[UserController::class,'deleteUser']);
+// Route::get('/deleteUser/{userId}',[UserController::class,'deleteUser']);
+Route::get('/deleteUser/{userId}/{adminId}',[UserController::class,'deleteUser']);
 Route::get('/deleteAdmin/{userId}',[UserController::class,'deleteAdmin']);
 Route::get('/profile/{userId}',[UserController::class,'viewUser']);
 Route::post('/profile/{userId}',[UserController::class,'updateUser']);
-Route::get('/viewAllUser',[UserController::class,'adminViewUser']);
+Route::get('/viewAllUser/{adminId}',[UserController::class,'adminViewUser']);
 Route::get('/viewAllAdmin',[UserController::class,'globalAdminViewAdmin']);
-Route::get('/banUser/{userId}',[UserController::class,'banUser']);
+Route::get('/banUser/{userId}/{adminId}',[UserController::class,'banUser']);
 Route::get('/banAdmin/{userId}',[UserController::class,'banAdmin']);
+Route::get('/changePassword/{userId}',[UserController::class,'viewChangePassword']);
+Route::post('/changePassword/{userId}',[UserController::class,'changePassword']);
+Route::get('/viewCreateAdmin',[UserController::class,'viewCreateAdmin']);
+Route::post('/viewCreateAdmin',[UserController::class,'createAdmin']);
 Route::get('/', function () {
     return view('welcome');
 });

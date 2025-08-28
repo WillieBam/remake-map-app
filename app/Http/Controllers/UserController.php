@@ -5,34 +5,46 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Password;
 use App\Models\User;
+use App\Models\Country;
+use App\Models\Message;
 use Illuminate\Validation\Rule;
 class UserController extends Controller
 {
-    public function createUser(Request $request)
+    public function viewCreateAdmin(){
+        $this->authorize('isGlobalAdmin',User::Class);
+        $countries = Country::all();
+        return view('viewCreateAdmin',['countries'=>$countries]);
+    }
+    public function createAdmin(Request $request)
     {
+        $this->authorize('isGlobalAdmin',User::Class);
         $request->validate([
             'name' => 'required|string|max:100',
             'email' => 'required|email|unique:users,email',
+            'country_id' => 'required',
             'password' => ['required',Password::min(6)->letters()->numbers()->symbols()],
             'confirmPassword' =>'required|same:password'
         ]);
         $user = new User;
         $user -> name = $request -> name;
         $user -> email = $request -> email;
-        $user -> password = bcrypt($request -> password); 
-        $user -> role_id = 3;
+        $user -> country_id = $request -> country_id;
+        $user -> password = Hash::make($request -> password); 
+        $user -> role_id = 2;
         $user -> save();
-        return redirect('viewSignUp')->with('success', 'Sign up successful!');
+        return redirect('viewCreateAdmin')->with('success', 'Create admin successful!');
     }
 
-    public function deleteUser($id)
+    public function deleteUser($id,$adminId)
     {
+        $this->authorize('isAdmin', User::class);
         $data = User::find($id);
         $data->delete();
-        return redirect('/viewAllUser');
+        return redirect('/viewAllUser/'.$adminId);
     }
     public function deleteAdmin($id)
     {
+        $this->authorize('isGlobalAdmin', User::class);
         $data = User::find($id);
         $data->delete();
         return redirect('/viewAllAdmin');
@@ -40,43 +52,59 @@ class UserController extends Controller
 
     public function updateUser(Request $request,$id)
     {
-         $request->validate([
+        $request->validate([
             'name' => 'required|string|max:100',
-            'email' => ['required','email',Rule::unique('users')->ignore($id,'user_id')]
+            'email' => ['required','email',Rule::unique('users','email')->ignore($id,'user_id')]
         ]);
         $data = User::find($id);
+        $this->authorize('isUserLogIn', $data);
         $data -> name = $request -> name;
         $data -> email = $request -> email;
+        $data -> country_id = $request -> country_id;
         $data -> save();
-        return view('profile',["data"=>$data,'success'=>'Update profile successful!']);
+        return redirect("/profile/".$id)->with('success','Update profile successful!');
     }
     public function viewUser($id)
     {
         $data = User::find($id);
-        return view('profile',["data"=>$data]);
+        $this->authorize('isUserLogIn', $data);
+        $countries = Country::all();
+        $messages = Message::where('user_id',$id)->paginate(15);
+        return view('profile',["data"=>$data,"countries"=>$countries,"messages"=>$messages]);
     }
-    public function adminViewUser(){
-        $data = User::where('role_id',3)->orderBy('name','asc')->paginate(15);
-        return view('viewAllUser',["data"=>$data]);
+    public function adminViewUser($id){
+        $admin = User::find($id);
+        $this->authorize('adminViewUser', $admin);
+        if($admin->role_id==1)
+            $data = User::where('role_id',3)->orderBy('name','asc')->paginate(15);
+        else if($admin->role_id==2){
+            $adminContinent = Country::find($admin->country_id) -> continent_id;
+            $countryList = Country::where('continent_id',$adminContinent)->pluck('country_id');
+            $data = User::whereIn('country_id',$countryList)->where('role_id',3)->orderBy('name','asc')->paginate(15);
+        }
+        return view('viewAllUser',["data"=>$data,"adminId"=>$id]);
     }
     public function globalAdminViewAdmin(){
+        $this->authorize('isGlobalAdmin', User::class);
         $data = User::where('role_id',2)->orderBy('name','asc')->paginate(15);
         return view('viewAllAdmin',["data"=>$data]);
     }
 
-    public function banUser($id)
+    public function banUser($id,$adminId)
     {
+        $this->authorize('isAdmin', User::class);
         $data = User::find($id);
         $data -> is_banned = true;
         $data -> save();
-        return view('viewAllUser',["data"=>User::where('role_id',3)->orderBy('name','asc')->paginate(15)]);
+        return redirect('/viewAllUser/'.$adminId);
     }
      public function banAdmin($id)
     {
+        $this->authorize('isGlobalAdmin', User::class);
         $data = User::find($id);
         $data -> is_banned = true;
         $data -> save();
-        return view('viewAllAdmin',["data"=>User::where('role_id',2)->orderBy('name','asc')->paginate(15)]);
+        return redirect('/viewAllAdmin');
     }
     public function changePassword(Request $request,$id)
     { 
@@ -86,72 +114,18 @@ class UserController extends Controller
             'confirmPassword' =>'required|same:newPassword'
         ]);
         $user = User::find($id);
+        $this->authorize('isUserLogIn', $user);
         if(!Hash::check($request->currentPassword,$user->password)){
             return redirect()->back()->with('error','current password is incorrect!');
         };
         $user -> password = bcrypt($request -> newPassword);
         $user -> save();
-        return view('profile',['data'=>$user,'successPassword'=>'Change password successful!']);
+        return redirect("/profile/".$id)->with('successPassword','Change password successful!');
     }
     public function viewChangePassword($id)
     {
         $data = User::find($id);
+        $this->authorize('isUserLogIn', $data);
         return view('changePassword',["data"=>$data]);
     }
 }
-// Check if id matches with session user (checked in middleware)
-
-        // Check if id exists in database
-
-        // Mass assignment (name and email)
-        // Update country Id
-        // Update password (remember to hash it)
-
-        // Save user to database
-
-        // Return OK response
-  // Check access level of session user (middleware)
-
-        // Check if id exists in database
-
-        // Delete user from database
-
-        // Return OK response
-// Check if name/email exists in database
-
-        // Mass assignment (name and email)
-
-        // Find and set country Id
-        // Find and set role Id
-
-        // Hash password
-
-        // Save user to database
-
-        // return OK response
-/* public function getUser($id)
-    {
-        // Check access level of session user (middleware)
-
-        // Check if id exists in database
-
-        // Get user from database
-
-        // Return user data
-    }
-
-    public function getUsers()
-    {
-        // check access level of session user (middleware)
-
-        // Get all users from database
-
-        // return users
-    }
-     // Check access level of session user (middleware)
-
-        // Check if id exists in database
-
-        // Ban user (set is_banned flag to true)
-
-        // Return OK response*/
