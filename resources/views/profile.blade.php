@@ -7,7 +7,7 @@
     <label for="country">Country</label><br><br>
     <select name="country_id" id="country" class="form-control">
         @if(empty($data->country_id))
-            <option value="">-- Select Country --</option>
+            <option value="" disabled selected>-- Select Country --</option>
         @endif
         @foreach($countries as $country)
             <option value="{{ $country->country_id }}" 

@@ -21,6 +21,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:100',
             'email' => 'required|email|unique:users,email',
+            'country_id' => 'required',
             'password' => ['required',Password::min(6)->letters()->numbers()->symbols()],
             'confirmPassword' =>'required|same:password'
         ]);
