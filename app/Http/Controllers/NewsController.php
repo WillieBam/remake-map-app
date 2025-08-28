@@ -64,7 +64,6 @@ class newsController extends Controller
 
     //get edit news form
     function viewEditNews($news_id){
-        $user = Auth::user();
         $news = News::find($news_id);
         return view('editNews', ['news_id' => $news_id, 'news' => $news]);
     }
