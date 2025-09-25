@@ -1,3 +1,10 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Create Admin') }}
+        </h2>
+    </x-slot>
+    <div style="padding: 20px;">
 <form action="/viewCreateAdmin" method="POST">
     @csrf
     <label for="name">Name</label><br><br>
@@ -17,7 +24,7 @@
     <input type="password" name="password" placeholder="Enter your password" required><br><br>
     <label for="confirmPassword">Confirm Password</label><br><br>
     <input type="password" name="confirmPassword" placeholder="Enter your password again" required><br><br>
-    <input type="submit" value="Create Admin">
+    <input type="submit" style=" padding: 10px; background: green; color: white;"  value="Create Admin">
     @if(session()->has('success'))
         <span>{{session('success')}}</span>
     @endif
@@ -28,3 +35,5 @@
         @endforeach
         </div>  
     @endif
+</div>
+</x-app-layout>

@@ -15,12 +15,34 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('countries.index')" :active="request()->routeIs('countries.index')">
+                        {{ __('Map') }}
+                    </x-nav-link>
+                    @can('admin')
+                    <x-nav-link :href="route('news.index')" :active="request()->routeIs('news.index')">
+                        {{ __('News') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('user.users', [Auth::user()->user_id])" :active="request()->routeIs('user.users')">
+                        {{ __('Users') }}
+                    </x-nav-link>
+                    @endif
+                    @if(auth()->check())
+                    @if(auth()->user()->role_id == 1)
+                    <x-nav-link :href="route('user.admins')" :active="request()->routeIs('user.admins')">
+                        {{ __('Admins') }}
+                    </x-nav-link>
+                    @endif
+                    <x-nav-link :href="route('user.profile', [Auth::user()->user_id])" :active="request()->routeIs('user.profile')">
+                        {{ __('Profile') }}
+                    </x-nav-link>
+                    @endif
                 </div>
             </div>
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ml-6">
                 <!-- Authentication -->
+                @if (auth()->check())
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
 
@@ -30,6 +52,26 @@
                         {{ __('Log Out') }}
                     </button>
                 </form>
+                @else
+                <form method="GET" action="{{ route('login') }}">
+                    @csrf
+
+                    <button style="margin-right: 20px;" :href="route('login')"
+                            onclick="event.preventDefault();
+                                        this.closest('form').submit();">
+                        {{ __('Log In') }}
+                    </button>
+                </form>
+                <form method="GET" action="{{ route('register') }}">
+                    @csrf
+
+                    <button :href="route('register')"
+                            onclick="event.preventDefault();
+                                        this.closest('form').submit();">
+                        {{ __('Register') }}
+                    </button>
+                </form>
+                @endif
             </div>
 
             <!-- Hamburger -->
@@ -54,22 +96,35 @@
 
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200">
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
-            </div>
-
             <div class="mt-3 space-y-1">
                 <!-- Authentication -->
+                @if (auth()->check())
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-
-                    <x-responsive-nav-link :href="route('logout')"
-                            onclick="event.preventDefault();
-                                        this.closest('form').submit();">
-                        {{ __('Log Out') }}
-                    </x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('logout')"
+                                onclick="event.preventDefault();
+                                            this.closest('form').submit();">
+                            {{ __('Log Out') }}
+                        </x-responsive-nav-link>
                 </form>
+                @else
+                <form method="POST" action="{{ route('login') }}">
+                    @csrf
+                        <x-responsive-nav-link :href="route('login')"
+                                onclick="event.preventDefault();
+                                            this.closest('form').submit();">
+                            {{ __('Log Out') }}
+                        </x-responsive-nav-link>
+                </form>
+                <form method="POST" action="{{ route('register') }}">
+                    @csrf
+                        <x-responsive-nav-link :href="route('register')"
+                                onclick="event.preventDefault();
+                                            this.closest('form').submit();">
+                            {{ __('Log Out') }}
+                        </x-responsive-nav-link>
+                </form>
+                @endif
             </div>
         </div>
     </div>

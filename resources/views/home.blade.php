@@ -1,3 +1,10 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Countries') }}
+        </h2>
+    </x-slot>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -46,15 +53,16 @@
       background-color: #4CAF50;
       color: white;
       border: none;
+      padding: 5px 10px;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="page-header">
+  <!-- <div class="page-header">
     <h1>Countries</h1>
-  </div>
+  </div> -->
 
   <!--search bar-->
   <div class="search-box">
@@ -141,9 +149,10 @@
     
   </script>
 
-  <div class="container">
+    <!--country and message list-->
+  <div class="container" style="display: flex flex-direction: col; gap: 20px;">
     <!--message board-->
-    <div class="message-view">
+    <div class="message-view" style="width: 40%;">
       @if(isset($country_data))
       @if(auth()->check())
       <button type="button" class="btn add-message-btn" id="post-message" onclick="toggleForm()"> Post Message </button>
@@ -178,35 +187,38 @@
         <h2>Messages Board for {{ $country_data->name }} </h2>
         @forelse($messages as $message)
 
-        <p>{{ $message->content}}
+        <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px; border-radius:5px; background-color:#fff;">
+          <p style="overflow-wrap: break-word">{{ $message->content }}
 
-          @if (auth()->check())
-          @can('create')
-        <form method="POST" action="{{ route('reports.add', [$country_data->country_id,$message->message_id]) }}">
-          @csrf
-          <input type="hidden" name="message_id" value="{{ $message->message_id }}">
-          <button type="submit" style="border: none; background:none; cursor: pointer;">
-            <i id="report-flag" class="bi bi-flag" style="color:red; text-align:right; margin-left:15px;"></i>
-          </button>
-        </form>
+            @if (auth()->check())
+            @can('report-message', $message)
+          <form method="POST" action="{{ route('reports.add', [$country_data->country_id,$message->message_id]) }}">
+            @csrf
+            <input type="hidden" name="message_id" value="{{ $message->message_id }}">
+            <button type="submit" style="border: none; background:none; cursor: pointer;">
+              <i id="report-flag" class="bi bi-flag" style="color:red; text-align:right; margin-left:15px;"></i>
+            </button>
+          </form>
+          @endcan
 
 
-        @elsecan('delete',$message)
-        <form method="POST" action="{{route('message.delete',[$country_data->country_id,$message->message_id])  }}">
-          @csrf
-          <button type="submit" style="border: none; background:none; cursor: pointer;">
-            <i id="delete-trash" class="bi bi-trash" style="color:red; text-align:right; margin-left:15px;"></i>
-          </button>
-        </form>
+          @can('delete',$message)
+          <form method="POST" action="{{route('message.delete',[$country_data->country_id,$message->message_id])  }}">
+            @csrf
+            <button type="submit" style="border: none; background:none; cursor: pointer;">
+              <i id="delete-trash" class="bi bi-trash" style="color:red; text-align:right; margin-left:15px;"></i>
+            </button>
+          </form>
         @endcan
         @endif
 
         </p>
-        <div>Posted on {{ date('M d, Y', strtotime($message->created_at)) }} • {{ $message->views }} views </div>
+        <div style="opacity: 0.5">Posted on {{ date('M d, Y', strtotime($message->created_at)) }} • {{ $message->views }} views </div>
+        </div>
         @empty
         <p>No messages</p>
         @endforelse
-      </div>
+      
 
       <script>
         const form = document.getElementById('post-message-form');
@@ -260,6 +272,8 @@
           }
         });
       </script>
+    
+    </div>
     </div>
 
 
@@ -268,15 +282,19 @@
     <div class="news-view">
       <h2>News</h2>
       @forelse($news as $n)
-      <a href="{{ route('news.show', [$n->country_id, $n->news_id]) }}">
-        <p>{{ $n->title }}</p>
-        <div>{{ Str::limit($n->content, 100)}}</div>
-        <div>Posted on {{ date('M d, Y', strtotime($n->created_at)) }} • {{ $n->views }} views </div>
-      </a>
+      <div style="width: 400px; border:1px solid #ccc; padding:10px; margin-bottom:10px; border-radius:5px; background-color:#fff;">
+        <a href="{{ route('news.show', [$n->country_id, $n->news_id]) }}">
+          <p style="overflow-wrap: break-word">{{ $n->title }}</p>
+          <div style="overflow-wrap: break-word">{{ Str::limit($n->content, 100)}}</div>
+          <div style="opacity: 0.5">Posted on {{ date('M d, Y', strtotime($n->created_at)) }} • {{ $n->views }} views </div>
+        </a>
+      </div>
       @empty
       <p>No news</p>
       @endforelse
-      @endif
+          @endif
+
+    </div>
 
       <!-- country list -->
       @if($countries->count() > 0)
@@ -294,17 +312,12 @@
           </div>
         </div>
         @endforeach
-      </div>
-
-    </div>
-
-
-
 
 
 </body>
 
 </html>
+</x-app-layout>
 
 <!--
  

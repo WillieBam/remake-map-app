@@ -1,3 +1,35 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Profile') }}
+        </h2>
+    </x-slot>
+
+<style>
+    table {
+        width: 100%;
+    }
+
+    th, td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    tr:hover {
+        background-color: #f5f5f5;
+    }
+
+    #update {
+        color: blue;
+        text-decoration: underline;
+    }
+</style>
+<div style="padding: 20px;">
 <form action="/profile/{{$data['user_id']}}" method="POST">
     @csrf
     <label for="name">name</label><br><br>
@@ -16,8 +48,9 @@
             </option>
         @endforeach
     </select><br><br>
-    <a href="/changePassword/{{$data['user_id']}}">Change Password</a><br><br>
-    <input type="submit" value="Update">
+    <a id="update" href="/changePassword/{{$data['user_id']}}">Change Password</a><br><br>
+    <input type="submit" style=" width: 70px; height: 30px; background: green; color: white;" value="Update">
+    <br><br>
     @if(session()->has('success'))
         <span>{{session('success')}}</span>
     @elseif(session()->has('successPassword'))
@@ -54,3 +87,5 @@
         border-collapse:collapse;
     }
 </style>
+</div>
+</x-app-layout>

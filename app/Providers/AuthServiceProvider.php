@@ -43,6 +43,16 @@ class AuthServiceProvider extends ServiceProvider
             return true;
         });
 
+        Gate::define('delete-message', function(User $user, Message $message) {
+            if ($user->role_id === 1) {
+                return true;
+            } elseif ($user->role_id === 2) {
+                return $user->country->continent->continent_id === $message->country->continent->continent_id;
+            } else {
+                return false;
+            }
+        });
+
         Gate::define('admin', function(User $user) {
             return $user->role_id == 1 || $user->role_id == 2;
         });
