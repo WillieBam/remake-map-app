@@ -33,6 +33,9 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         Gate::define('report-message', function(User $user, Message $message) {
+            if ($user->role_id < 3)
+                return false; // Admins cannot report messages
+
             $found = Report::where([['user_id', '=', $user->user_id], ['message_id', '=', $message->message_id]])->first();
 
             if ($found)

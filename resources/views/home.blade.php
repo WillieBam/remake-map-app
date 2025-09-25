@@ -199,10 +199,9 @@
               <i id="report-flag" class="bi bi-flag" style="color:red; text-align:right; margin-left:15px;"></i>
             </button>
           </form>
-          @endcan
 
 
-          @can('delete',$message)
+          @elsecan('delete',$message)
           <form method="POST" action="{{route('message.delete',[$country_data->country_id,$message->message_id])  }}">
             @csrf
             <button type="submit" style="border: none; background:none; cursor: pointer;">

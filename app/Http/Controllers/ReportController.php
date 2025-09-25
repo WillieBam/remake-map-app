@@ -88,7 +88,7 @@ class ReportController extends Controller
         $allReports = Report::with(['message.country'])
             ->get()
             ->filter(function($report) { return !empty($report->message); })
-            ->filter(function($report) { return $report->message->country->continent_id == Auth::user()->country->continent_id; })
+            ->filter(function($report) { return $report->message->country->continent_id == Auth::user()->country->continent_id || Auth::user()->role_id == 1; })
             ->values();
 
         $serializedReports = $this->serializeReports($allReports);
@@ -116,7 +116,7 @@ class ReportController extends Controller
             $results = Report::with(['user', 'message.country'])
                 ->get()
                 ->filter(function($report) { return !empty($report->message); })
-                ->filter(function($report) { return $report->message->country->continent_id == Auth::user()->country->continent_id; })
+                ->filter(function($report) { return $report->message->country->continent_id == Auth::user()->country->continent_id || Auth::user()->role_id == 1;; })
                 ->filter(function($report) use ($search) { return !empty($search) ? Str::contains($report->message->content, $search) : true; })
                 ->values();
         } else {

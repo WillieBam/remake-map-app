@@ -22,6 +22,9 @@
                     <x-nav-link :href="route('news.index')" :active="request()->routeIs('news.index')">
                         {{ __('News') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('reports.view')" :active="request()->routeIs('reports.view')">
+                        {{ __('Reports') }}
+                    </x-nav-link>
                     <x-nav-link :href="route('user.users', [Auth::user()->user_id])" :active="request()->routeIs('user.users')">
                         {{ __('Users') }}
                     </x-nav-link>

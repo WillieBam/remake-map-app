@@ -1,3 +1,10 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Reports') }}
+        </h2>
+    </x-slot>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -40,7 +47,7 @@
                 <h3>Reports</h3>
                 <div>
                     <input id="search_report" value="{{ $search }}" style=" width: 500px; height: 30px; border: none; border-bottom: 2px solid gray;" type="text" name="search_report" placeholder="Search reports...">
-                    <button style=" width: 70px; height: 30px;" onclick="query()">Search</button>
+                    <button style=" width: 70px; height: 30px; background: lightgreen;" onclick="query()">Search</button>
                 
                     <select id="country-filter"">
                         <option value="0">All</option>
@@ -49,7 +56,6 @@
                         @endphp
 
                         @foreach ($countries as $country)
-                        <option value="{{ $country['country_id'] }}">{{ $country['name'] }}</option>
                         <option {{ $country['country_id'] == $filter ? "selected" : "" }} value="{{ $country['country_id'] }}">{{ $country['name'] }}</option>
                         @endforeach
                     </select>
@@ -93,7 +99,7 @@
                     query();
                 </script>
 
-                <div id="reports-list">
+                <div id="reports-list" style="max-height: 80vh; overflow-y: auto;">
                 @foreach ($reports as $report)
                     @if ($selectedReport && $report['message']['message_id'] == $selectedReport['message']['message_id'])
                     <a name="{{ $report['message']['message_id'] }}" href="{{ route('reports.view') }}">
@@ -106,11 +112,11 @@
                                 <li>{{ $report['message']['country']['name'] }}</li>
                                 <li>{{ $report['message']['created_at'] ?? "no date" }}</li>
                             </ul>
-                            <p>{{ $report['message']['content'] }}</p>
-                            <p>{{ $report['count'] }}</p>
+                            <p style="overflow-wrap: break-word">{{ $report['message']['content'] }}</p>
+                            <p style="opacity: 0.5;">Report count(s): {{ $report['count'] }}</p>
                             <form method="POST" action="{{ route('message.delete', [$report['message']['country_id'], $report['message']['message_id']]) }}">
                                 @csrf
-                                <button type="submit">Delete</button>
+                                <button type="submit"  style="background: red; padding: 5px 10px; color: white;">Delete</button>
                             </form>
                         </div>
                     </a>
@@ -128,13 +134,14 @@
                             <li>{{ $selectedReport['message']['country']['name'] }}</li>
                             <li>{{ $selectedReport['message']['created_at'] ?? "no date" }}</li>
                         </ul>
-                        <p>{{ $selectedReport['message']['content'] }}</p>
-                        <p>{{ $selectedReport['count'] }}</p>
+                        <p style="overflow-wrap: break-word">{{ $selectedReport['message']['content'] }}</p>
+                        <p style="opacity: 0.5;">Report count(s): {{ $selectedReport['count'] }}</p>
                         <form method="POST" action="{{ route('message.delete', [$selectedReport['message']['country_id'], $selectedReport['message']['message_id']]) }}">
                             @csrf
-                            <button type="submit">Delete</button>
+                            <button type="submit" style="background: red; padding: 5px 10px; color: white;">Delete</button>
                         </form>
 
+                        <h4>Reported by:</h4>
                         <ul>
                         @foreach ($selectedReport['reports'] as $report)
                             <li>
@@ -148,3 +155,4 @@
         </div>
     </body>
 </html>
+</x-app-layout>
