@@ -16,8 +16,8 @@ class ReportSeeder extends Seeder
          for ($i = 0; $i < 100; $i++) {
             
             DB::table('reports')->insert([
-                'user_id' => rand(0, 100),
-                'message_id' => rand(0, 100),
+                'user_id' => rand(1, 100),
+                'message_id' => rand(1, 100),
                 'created_at' => now(),
                 'updated_at' => NULL,
             ]);

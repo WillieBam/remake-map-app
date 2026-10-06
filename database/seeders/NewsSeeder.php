@@ -19,7 +19,7 @@ class NewsSeeder extends Seeder
         for ($i = 0; $i < 100; $i++){
             $randomTimestamp = now()->subDays(rand(0, 365))->subMinutes(rand(0, 1440));
 
-            DB::table('News')->insert([
+            DB::table('news')->insert([
                 'title' => Str::random(50),
                 'user_id' => rand(1, 500),
                 'country_id' => rand(1, 195),

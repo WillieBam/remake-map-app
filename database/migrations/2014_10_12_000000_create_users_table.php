@@ -16,7 +16,7 @@ class CreateUsersTable extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id('user_id')->autoIncrement();
             $table->foreignId('country_id')->nullable()->constrained('countries', 'country_id')->onDelete('set null');
-            $table->foreignId('role_id')->default('3')->constrained('roles', 'role_id')->onDelete('set null');
+            $table->foreignId('role_id')->nullable()->default('3')->constrained('roles', 'role_id')->onDelete('set null');
             $table->string('name');
             $table->string('email');
             $table->string('password');
