@@ -26,6 +26,8 @@ Route::get('/countries', [CountryController::class, 'index'])->name('countries.i
 Route::get('/countries/{id}', [CountryController::class, 'index'])->name('countries.show');
 Route::post('/countries/{id}/create-message', [MessageController::class, 'store'])->name('message.add');
 Route::post('/countries/{cid}/delete-message/{mid}',[MessageController::class,'delete'])->name('message.delete');
+Route::get('/countries-list', [CountryController::class,'getCountriesList'])->name('countries.list');
+Route::get('/countries/{id}/data', [CountryController::class, 'getCountryData'])->name('countries.data');
 
 // User routes
 Route::get('/deleteUser/{userId}/{adminId}',[UserController::class,'deleteUser']);
