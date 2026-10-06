@@ -1,0 +1,55 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Containerfile
+    image: localhost/map_app:latest
+    container_name: map_app
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/var/www/html:Z
+      - /etc/ssl/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=global_peace
+      - DB_USERNAME=root
+      - DB_PASSWORD=secret
+      - COMPOSER_ALLOW_SUPERUSER=1
+      - SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
+      - CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
+    command: ["sh", "/var/www/html/docker-entrypoint.sh"]
+    depends_on:
+      - db
+
+  db:
+    image: docker.io/library/mariadb:10.6
+    container_name: map_app_db
+    restart: unless-stopped
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: global_peace
+    volumes:
+      - db_data:/var/lib/mysql:Z
+
+  phpmyadmin:
+    image: docker.io/phpmyadmin/phpmyadmin:latest
+    container_name: map_app_pma
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: secret
+    depends_on:
+      - db
+
+volumes:
+  db_data:
+
