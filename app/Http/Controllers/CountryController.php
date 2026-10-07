@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Message;
 use App\Models\Country;
 use Illuminate\Support\Facades\Cookie;
+use App\Models\News;                    
+use Illuminate\Support\Facades\Auth;   
 class CountryController extends Controller
 {
     function index($country_id=null){
